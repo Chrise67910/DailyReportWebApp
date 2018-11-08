@@ -1,12 +1,39 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { ReactDom } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
-import App from './Components/App';
-import * as serviceWorker from './serviceWorker';
+import {Home} from './Components/Home';
+import {Customer} from './Components/Customer';
+import {Root} from './Components/root';
+import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
 
+import * as serviceWorker from './serviceWorker';
+import { fromPromise } from 'apollo-link';
+
+const app = (
+        <Router>
+        <div>
+          <ul>
+            <li>
+              <Link to="/">Übersicht</Link>
+            </li>
+            <li>
+              <Link to="/customer">Kunden</Link>
+            </li>
+          </ul>
+  
+          <hr />
+  
+          <Route exact path="/" component={Home} />
+          <Route path="/customer" component={Customer} />
+        </div>
+      </Router>
+);
+
+
+ReactDOM.render(app, document.getElementById('root'))
 render((
     <BrowserRouter>
-      <App />
+      <Home />
     </BrowserRouter>
   ), document.getElementById('root'));
 // If you want your app to work offline and load faster, you can change
