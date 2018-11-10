@@ -21,7 +21,7 @@ class App extends Component {
           <Header />       
           <Switch>
             <Route path="/kunden" component={Kunden} />
-            <Route path="/" component={Uebersicht} />
+            <Route exact path="/" component={Uebersicht} />
           </Switch>
         </div>
       </BrowserRouter>

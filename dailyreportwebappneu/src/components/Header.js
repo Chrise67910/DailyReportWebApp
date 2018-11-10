@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Switch, NavLink  } from 'react-router-dom';
 
 const Header = () => (
     <header>
-        <NavLink  className="box_nav" to="/">
+        <NavLink exact className="box_nav" activeClassName="active" to="/">
             <div>
               Übersicht
             </div>
