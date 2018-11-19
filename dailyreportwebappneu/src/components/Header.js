@@ -14,6 +14,11 @@ const Header = () => (
               Kunden
             </div>
           </NavLink >
+          <NavLink  className="box_nav" activeClassName="active" to="/aufgaben">
+            <div>
+              Aufgaben
+            </div>
+          </NavLink >
     </header> 
 )
 export default Header;

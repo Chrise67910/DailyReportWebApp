@@ -1,8 +1,17 @@
 import React, { Component } from 'react';
+import {GoogleApiWrapper, Map, Marker, InfoWindow} from "google-maps-react";
+import {Typography} from "typography";
+import {Paper} from "@material-ui/core/Paper";
+import gql from 'graphql-tag';
+
+
+
+
 
 const Uebersicht = () => (
-    <div>
-    <h1>TEST</h1>
-    </div>
-)
-export default Uebersicht;
+  <div className="Uebersicht">  
+
+  </div>
+ );
+
+ export default Uebersicht;
