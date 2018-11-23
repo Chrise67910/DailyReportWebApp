@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch, NavLink  } from 'react-router-dom';
 
 
 const Header = () => (
-    <header>
+    <header style={{display: 'flex'}}>
         <NavLink exact className="box_nav" activeClassName="active" to="/">
             <div>
               Übersicht
