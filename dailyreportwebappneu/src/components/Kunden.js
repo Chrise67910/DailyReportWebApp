@@ -21,7 +21,8 @@ const client = new ApolloClient({
 
 const Customers_QUERY = gql`
     {
-      allCustomers{
+      allCustomers {
+        id
         name
         street
       }
@@ -73,12 +74,12 @@ export class Kunden extends Component {
     
   }
 
-  editCustomer(e, customer) {
-    console.log(customer);
+  editCustomer = (customer) => () =>  {
+    console.log(customer.name);
   }
 
-  deleteCustomer() {
-    console.log('this is:', this);
+  deleteCustomer = (customer)  => () => {
+    console.log(customer);
   }
 
   handleToggle = value => () => {
@@ -120,7 +121,7 @@ export class Kunden extends Component {
                     <List>
                       
                     <ListItem
-                      key={customer}
+                      key={customer.id}
                       role={undefined}
                       dense
                       button
@@ -132,13 +133,13 @@ export class Kunden extends Component {
                         tabIndex={-1}
                         disableRipple
                       />
-                      
+                      {customer.id }
                     <ListItemText primary={customer.name}/>
                       <ListItemSecondaryAction>
-                        <IconButton aria-label="Comments" onClick={(e, customer) => this.editCustomer(e, customer)}>
+                        <IconButton aria-label="Comments" onClick={this.editCustomer(customer)}>
                           Edit
                         </IconButton>
-                        <IconButton aria-label="Comments" onClick={(e) => this.deleteCustomer(e)}>
+                        <IconButton aria-label="Comments" onClick={this.deleteCustomer(customer)}>
                         Delete
                         </IconButton>
                       </ListItemSecondaryAction>
