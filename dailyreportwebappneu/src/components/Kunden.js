@@ -39,7 +39,8 @@ export class Kunden extends Component {
       showingInfoWindow: false,
       activeMarker: {},
       selectedPlace: {},
-      checked: [0]
+      checked: [0],
+      showForm: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -62,16 +63,8 @@ export class Kunden extends Component {
   }
   
   addCustomer() {
-    return(
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Name:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-    )
-    
+    //alert(1);
+    this.setState({showForm: true});
   }
 
   editCustomer = (customer) => () =>  {
@@ -149,16 +142,29 @@ export class Kunden extends Component {
                 } }
                 
             </Query>
-                    <IconButton aria-label="Comments" onClick={() => this.addCustomer()}>
-                      ADD
-                    </IconButton>
-                    
+            <IconButton aria-label="Comments" onClick={(e) => this.addCustomer(e)}>
+              ADD
+            </IconButton>
+            {this.state.showForm ? (
+              <CustomerForm />
+            ): (<div></div>)}    
           </div>
       </ApolloProvider>
     );
 
 
   }
+}
+function CustomerForm() {
+  return(
+    <form>
+      <label>
+        Name:
+        <input type="text" />
+      </label>
+      <input type="submit" value="Submit" />
+    </form>
+  );
 }
 
 
