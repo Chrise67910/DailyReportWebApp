@@ -173,12 +173,12 @@ export class Kunden extends Component {
                       onClick={this.handleToggle(customer)}
                       className={Kunden.ListItem}
                       >
-                      <Checkbox
+                      {/* <Checkbox
                         checked={this.state.checked.indexOf(customer) !== -1}
                         tabIndex={-1}
                         disableRipple
-                      />
-                    <ListItemText style={{fontSize: 18}} primary={customer.name}/>
+                      /> */}
+                    <ListItemText style={{fontSize: 18 }} primary={customer.name}/>
                     <ListItemText style={{fontSize: 15}} secondary={customer.street + " " + customer.plz + ", " + customer.city}/>
                       <ListItemSecondaryAction>
                         <IconButton aria-label="Comments" onClick={this.editCustomer(customer)}>  
@@ -213,11 +213,11 @@ function CustomerForm() {
     <form style={{display: 'flex'}}>
       <label>
         Name:
-        <input type="text" />
+        <input type="text" ref='name' />
       </label>
       <label>
         Straße:
-        <input type="text" />
+        <input type="text" ref='strasse' />
       </label>
       <label>
         Plz:
