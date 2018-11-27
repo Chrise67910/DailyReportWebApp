@@ -13,7 +13,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import CommentIcon from '@material-ui/icons/Comment';
-
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import Button from '@material-ui/core/Button';
 
 const client = new ApolloClient({
   uri: "https://api.graph.cool/simple/v1/cjna4ydca59580129beayc2nw"
@@ -25,6 +27,8 @@ const Customers_QUERY = gql`
         id
         name
         street
+        plz
+        city
       }
 
     }
@@ -101,6 +105,14 @@ export class Kunden extends Component {
   return (
         <ApolloProvider client={client}>
           <div className="Kunden">
+          <div style={{ height: 100, borderColor: '#E3E3E3', borderBottomWidth: 3, borderBottomStyle: 'solid'}}>
+            <Button style={{backgroundColor: '#009999', color: '#fff', position: 'absolute', right: 100}} onClick={(e) => this.addCustomer(e)}>
+              Hinzufügen
+            </Button>
+            {this.state.showForm ? (
+              <CustomerForm />
+            ): (<div></div>)}    
+          </div>
             <Query query={Customers_QUERY}>
               {({loading, data, error}) => {
                 if (loading) {
@@ -114,6 +126,7 @@ export class Kunden extends Component {
                     <List>
                       
                     <ListItem
+                      style={{borderColor: '#E3E3E3', borderBottomWidth: 2, borderBottomStyle: 'solid'}}
                       key={customer.id}
                       role={undefined}
                       dense
@@ -126,14 +139,14 @@ export class Kunden extends Component {
                         tabIndex={-1}
                         disableRipple
                       />
-                      {customer.id }
-                    <ListItemText primary={customer.name}/>
+                    <ListItemText style={{fontSize: 18}} primary={customer.name}/>
+                    <ListItemText style={{fontSize: 15}} secondary={customer.street + " " + customer.plz + ", " + customer.city}/>
                       <ListItemSecondaryAction>
-                        <IconButton aria-label="Comments" onClick={this.editCustomer(customer)}>
-                          Edit
+                        <IconButton aria-label="Comments" onClick={this.editCustomer(customer)}>  
+                          <EditIcon />
                         </IconButton>
                         <IconButton aria-label="Comments" onClick={this.deleteCustomer(customer)}>
-                        Delete
+                          <DeleteIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>  
@@ -142,12 +155,12 @@ export class Kunden extends Component {
                 } }
                 
             </Query>
-            <IconButton aria-label="Comments" onClick={(e) => this.addCustomer(e)}>
+            {/* <IconButton aria-label="Comments" onClick={(e) => this.addCustomer(e)}>
               ADD
             </IconButton>
             {this.state.showForm ? (
               <CustomerForm />
-            ): (<div></div>)}    
+            ): (<div></div>)}     */}
           </div>
       </ApolloProvider>
     );
@@ -157,9 +170,17 @@ export class Kunden extends Component {
 }
 function CustomerForm() {
   return(
-    <form>
+    <form style={{display: 'flex'}}>
       <label>
         Name:
+        <input type="text" />
+      </label>
+      <label>
+        Straße:
+        <input type="text" />
+      </label>
+      <label>
+        Plz:
         <input type="text" />
       </label>
       <input type="submit" value="Submit" />
