@@ -24,6 +24,8 @@ const Customers_QUERY = gql`
       allCustomers {
         id
         name
+        city
+        plz
         street
       }
 
@@ -43,8 +45,9 @@ export class Kunden extends Component {
       showForm: false
     };
 
-    this.handleChange = this.handleChange.bind(this);
+    this.handlecitychange = this.handlecitychange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handlenameChange = this.handlecitychange.bind(this)
   }
 
   state = {
@@ -53,22 +56,57 @@ export class Kunden extends Component {
     selectedPlace: {},
     checked: [0]
   }
-  handleChange(event) {
-    this.setState({value: event.target.value});
+  handlenameChange(e) {
+    this.setState({name: e.target.value});
   }
 
-  handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
-    event.preventDefault();
+  handlecitychange(e){
+    this.setState({city: e.target.value});
+  }  
+
+  handleSubmit = (e) => {
+    client.mutate({
+      variables: { title: card.title, laneId: laneId },
+      mutation: gql`
+          mutation createTrelloCard($title: String!, $laneId: String!){
+              createTrelloCard(title: $title, laneId: $laneId) {
+                  id
+                  title
+                  laneId
+              }
+          }
+      `,
+  }).then((data) => {
+      //this.fetchCards();
+      //this.forceUpdate();
+      // var dataStat = this.state.boardData;
+      // console.log(dataStat);
+      // dataStat.lanes.forEach(lane => {
+      //   if (data.data.createTrelloCard.laneId === lane.id) {
+      //     lane.cards.forEach(cardE => {
+      //       if (data.data.createTrelloCard.title === cardE.title) {
+      //         cardE.id = data.data.createTrelloCard.id;
+      //       }
+      //     })
+      //   }
+      // })
+      // console.log(dataStat);
+      // this.setState({boardData: dataStat})
+      // console.log(data.data.createTrelloCard.id);
+      //card.id = data.data.createTrelloCard.id;
+      window.location.reload();
+  }).catch(error => {
+      console.log(error);
+  })
   }
   
-  addCustomer() {
+  showForm() {
     //alert(1);
     this.setState({showForm: true});
   }
 
   editCustomer = (customer) => () =>  {
-    console.log(customer.name);
+    this.setState({showForm: true});
   }
 
   deleteCustomer = (customer)  => () => {
@@ -99,6 +137,7 @@ export class Kunden extends Component {
       'marginRight': 'auto'
     }
   return (
+      
         <ApolloProvider client={client}>
           <div className="Kunden">
             <Query query={Customers_QUERY}>
@@ -121,17 +160,14 @@ export class Kunden extends Component {
                       onClick={this.handleToggle(customer)}
                       className={Kunden.ListItem}
                       >
-                      <Checkbox
-                        checked={this.state.checked.indexOf(customer) !== -1}
-                        tabIndex={-1}
-                        disableRipple
-                      />
+                      
                       {customer.id }
                     <ListItemText primary={customer.name}/>
                       <ListItemSecondaryAction>
                         <IconButton aria-label="Comments" onClick={this.editCustomer(customer)}>
                           Edit
                         </IconButton>
+                        
                         <IconButton aria-label="Comments" onClick={this.deleteCustomer(customer)}>
                         Delete
                         </IconButton>
@@ -142,12 +178,22 @@ export class Kunden extends Component {
                 } }
                 
             </Query>
-            <IconButton aria-label="Comments" onClick={(e) => this.addCustomer(e)}>
+            <IconButton aria-label="Comments" onClick={(e) => this.showForm(e)}>
               ADD
             </IconButton>
-            {this.state.showForm ? (
-              <CustomerForm />
-            ): (<div></div>)}    
+              {this.state.showForm ? (
+                <form>
+                    Name: 
+                    <input type="text" name="name" placeholder="name" ref="name" />
+                    Stadt: 
+                    <input type="text" name="city" placeholder="city" ref="city" />
+                    PLZ: 
+                    <input type="text" name="plz" ref="plz"/>
+                    Strasse: 
+                    <input type="text" name="street" ref="street"/>
+                    <button onClick={(e) => this.handleSubmit(e)}>Submit</button>
+                </form>
+              ): (<div></div>)}    
           </div>
       </ApolloProvider>
     );
@@ -155,17 +201,7 @@ export class Kunden extends Component {
 
   }
 }
-function CustomerForm() {
-  return(
-    <form>
-      <label>
-        Name:
-        <input type="text" />
-      </label>
-      <input type="submit" value="Submit" />
-    </form>
-  );
-}
+
 
 
 // export class Customer extends Component {
