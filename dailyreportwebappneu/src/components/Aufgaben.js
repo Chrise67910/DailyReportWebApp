@@ -103,7 +103,7 @@ class Aufgaben extends Component {
         // console.log(dataStat);
         // dataStat.lanes.forEach(lane => {
         //   if (data.data.createTrelloCard.laneId === lane.id) {
-        //     lane.cards.forEach(cardE => {
+        //     lane.cards.forEach(cardE => { 
         //       if (data.data.createTrelloCard.title === cardE.title) {
         //         cardE.id = data.data.createTrelloCard.id;
         //       }
