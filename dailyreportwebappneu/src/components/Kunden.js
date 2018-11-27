@@ -173,11 +173,11 @@ function CustomerForm() {
     <form style={{display: 'flex'}}>
       <label>
         Name:
-        <input type="text" ref='name' />
+        <input type="text"/>
       </label>
       <label>
         Straße:
-        <input type="text" ref='strasse' />
+        <input type="text" />
       </label>
       <label>
         Plz:
