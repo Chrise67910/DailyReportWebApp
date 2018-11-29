@@ -54,6 +54,7 @@ export class Kunden extends Component {
       ort: '',
       id: '',
       showFormEdit: false,
+      showAddButton: true,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -111,9 +112,24 @@ export class Kunden extends Component {
   
   addCustomer() {
     //alert(1);
+    this.setState({showAddButton: false});
     this.setState({showForm: true});
+    this.setState({showFormEdit: false});
+    this.setState({id: ''});
+    this.setState({name: ''});
+    this.setState({strasse: ''});
+    this.setState({plz: ''});
+    this.setState({ort: ''});
+  }
+  _hideForms(event) {
+    this.setState({showFormEdit: false});
+    this.setState({showForm: false});
+    this.setState({showAddButton: true});
+    event.preventDefault();
   }
   _showFormEdit(e, customer) {
+    this.setState({showAddButton: false});
+    this.setState({showForm: false});
     this.setState({id: customer.id});
     this.setState({showFormEdit: true});
     this.setState({name: customer.name});
@@ -173,9 +189,11 @@ export class Kunden extends Component {
         <ApolloProvider client={client}>
           <div className="Kunden">
           <div style={{ height: 100, borderColor: '#E3E3E3', borderBottomWidth: 3, borderBottomStyle: 'solid'}}>
+          {this.state.showAddButton ? (
             <Button style={{backgroundColor: '#009999', color: '#fff', position: 'absolute', right: 100}} onClick={(e) => this.addCustomer(e)}>
               Hinzufügen
             </Button>
+          ): (<div></div>)}
             {this.state.showForm ? (
               <form style={{display: 'flex'}}>
                 <label>
@@ -195,6 +213,7 @@ export class Kunden extends Component {
                   <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
                 <input type="submit" value="Submit" onClick={this.handleSubmit} />
+                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
               </form>
             ): (<div></div>)}    
             {this.state.showFormEdit ? (
@@ -216,6 +235,7 @@ export class Kunden extends Component {
                   <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
                 <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
+                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
               </form>
             ): (<div></div>)}    
           </div>
