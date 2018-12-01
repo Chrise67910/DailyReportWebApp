@@ -55,6 +55,7 @@ export class Kunden extends Component {
       id: '',
       showFormEdit: false,
       showAddButton: true,
+      showItemButton: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -167,6 +168,11 @@ export class Kunden extends Component {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
+    if (this.state.showItemButton === true) {
+      this.setState({showItemButton: false})
+    } else {
+      this.setState({showItemButton: true})
+    }
     if (currentIndex === -1) {
       newChecked.push(value);
     } else {
@@ -197,45 +203,49 @@ export class Kunden extends Component {
             {this.state.showForm ? (
               <form style={{display: 'flex'}}>
                 <label>
-                  Name:
-                  <input type="text" value={this.state.name} onChange={this.handleNameChange} />
+                  <input placeholder="Name" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.name} onChange={this.handleNameChange} />
                 </label>
                 <label>
-                  Straße:
-                  <input type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
+                  <input placeholder="Straße" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
                 </label>
                 <label>
-                  Plz:
-                  <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
+                  <input placeholder="Plz" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
                 </label>
                 <label>
-                  Ort:
-                  <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
+                  <input placeholder="Ort" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
-                <input type="submit" value="Submit" onClick={this.handleSubmit} />
-                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
+                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5}} onClick={this.handleSubmit}>
+                  Hinzufügen
+                </Button>
+                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5}} onClick={(e) => this._hideForms(e)}>
+                  Abbrechen
+                </Button>
+                {/* <input style={{backgroundColor: '#009999', color: '#fff'}} type="submit" value="Submit" onClick={this.handleSubmit} />
+                <input style={{borderColor: '#E3E3E3', borderWidth: 1, borderStyle: "solid", color: '#000'}}type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} /> */}
               </form>
             ): (<div></div>)}    
             {this.state.showFormEdit ? (
               <form style={{display: 'flex'}}>
                 <label>
-                  Name:
-                  <input type="text" value={this.state.name} onChange={this.handleNameChange} />
+                  <input placeholder="Name" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.name} onChange={this.handleNameChange} />
                 </label>
                 <label>
-                  Straße:
-                  <input type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
+                  <input placeholder="Straße" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
                 </label>
                 <label>
-                  Plz:
-                  <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
+                  <input placeholder="Plz" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
                 </label>
                 <label>
-                  Ort:
-                  <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
+                  <input placeholder="Ort" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
-                <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
-                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
+                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5}} onClick={(e) => this.editCustomer(e)}>
+                  Ändern
+                </Button>
+                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5}} onClick={(e) => this._hideForms(e)}>
+                  Abbrechen
+                </Button>
+                {/* <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
+                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} /> */}
               </form>
             ): (<div></div>)}    
           </div>
@@ -250,24 +260,23 @@ export class Kunden extends Component {
                 const {allCustomers} = data;
                 return (allCustomers.map(customer => (
                     <List>
-                      
                     <ListItem
                       style={{borderColor: '#E3E3E3', borderBottomWidth: 2, borderBottomStyle: 'solid'}}
                       key={customer.id}
                       role={undefined}
                       dense
-                      button
-                      onClick={this.handleToggle(customer)}
                       className={Kunden.ListItem}
                       >
-                      {/* <Checkbox
+                      <Checkbox
+                        onClick={this.handleToggle(customer)}
                         checked={this.state.checked.indexOf(customer) !== -1}
                         tabIndex={-1}
                         disableRipple
-                      /> */}
+                      />
                     <ListItemText style={{fontSize: 18 }} primary={customer.name}/>
-                    <ListItemText style={{fontSize: 15}} secondary={customer.street + " " + customer.plz + ", " + customer.city}/>
-                      <ListItemSecondaryAction>
+                    <ListItemText style={{fontSize: 15}} secondary={customer.street + ", " + customer.plz + " " + customer.city}/>
+                    {this.state.showItemButton ? (
+                        <ListItemSecondaryAction>
                         <IconButton aria-label="Comments" onClick={(e) => this._showFormEdit(e, customer)}>  
                           <EditIcon />
                         </IconButton>
@@ -275,6 +284,7 @@ export class Kunden extends Component {
                           <DeleteIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
+                    ): (<div></div>)}
                     </ListItem>  
                     </List>
                 )));                
