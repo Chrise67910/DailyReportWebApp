@@ -16,6 +16,12 @@ import CommentIcon from '@material-ui/icons/Comment';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Button from '@material-ui/core/Button';
+import LocationSearchInput from './locationSearchInput';
+
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
 import Customer_DELETE from '../mutations/delete_customer';
 import Customer_UPDATE from '../mutations/update_customer';
@@ -56,7 +62,6 @@ export class Kunden extends Component {
       showFormEdit: false,
       showAddButton: true,
     };
-
     this.handleChange = this.handleChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleStreetChange = this.handleStreetChange.bind(this);
@@ -92,14 +97,16 @@ export class Kunden extends Component {
     //alert(this.state.name, this.state.strasse, this.state.plz, this.state.ort);
     //console.log("name", this.state.name, "street", this.state.strasse, "plz", this.state.plz, "city", this.state.ort)
       client.mutate({
-          variables: { name: this.state.name, street: this.state.strasse, plz: this.state.plz, city: this.state.ort },
+          variables: { name: this.state.name, street: this.state.strasse, plz: parseInt(this.state.plz), city: this.state.ort, lat: this.state.latitude, lng: this.state.longitude },
           mutation: gql`
-              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String){
-                  createCustomer(name: $name, street: $street, plz: $plz, city: $city) {
+              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String, $lat: Float, $lng: Float){
+                  createCustomer(name: $name, street: $street, plz: $plz, city: $city, lat: $lat, lng: $lng) {
                       name
                       street
                       plz
                       city
+                      lat
+                      lng
                   }
               }
           `,
@@ -109,7 +116,42 @@ export class Kunden extends Component {
           console.log(error);
       })
   }
-  
+
+  // -------- Form  ----------
+  handleChangeStreet = strasse => {
+    this.setState({ strasse });
+  };
+
+  handleSelectStreet = selected => {
+    this.setState({ isGeocoding: true });
+    var strasseWith = selected;
+    var strasseWithOut = strasseWith.slice(0,(strasseWith.indexOf(',')));
+    this.setState({ strasse: strasseWithOut });
+    geocodeByAddress(selected)
+        //.then(res => getLatLng(res[0]))
+        .then(res => {
+            //console.log(res[0]["address_components"]);
+            this.setState({
+                ort: res[0]["address_components"][2]["long_name"],
+                plz: res[0]["address_components"][6]["long_name"],
+            }) 
+            return getLatLng(res[0]);
+        })
+        .then(({ lat, lng }) => {
+        this.setState({
+            latitude: lat,
+            longitude: lng,
+            isGeocoding: false,
+        });
+            //console.log(this.state.latitude);
+        })
+        .catch(error => {
+        this.setState({ isGeocoding: false });
+        console.log('error', error); // eslint-disable-line no-console
+    })
+  };
+  // ------ Ende Form --------
+
   addCustomer() {
     //alert(1);
     this.setState({showAddButton: false});
@@ -200,10 +242,46 @@ export class Kunden extends Component {
                   Name:
                   <input type="text" value={this.state.name} onChange={this.handleNameChange} />
                 </label>
-                <label>
-                  Straße:
-                  <input type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
-                </label>
+
+                <PlacesAutocomplete
+                  value={this.state.strasse}
+                  onChange={this.handleChangeStreet}
+                  onSelect={this.handleSelectStreet}
+                >
+                  {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                    <div>
+                      <input
+                        {...getInputProps({
+                          placeholder: 'Search Places ...',
+                          className: 'location-search-input',
+                        })}
+                      />
+                      <div className="autocomplete-dropdown-container">
+                        {loading && <div>Loading...</div>}
+                        {suggestions.map(suggestion => {
+                          const className = suggestion.active
+                            ? 'suggestion-item--active'
+                            : 'suggestion-item';
+                          // inline style for demonstration purpose
+                          const style = suggestion.active
+                            ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                            : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                          return (
+                            <div
+                              {...getSuggestionItemProps(suggestion, {
+                                className,
+                                style,
+                              })}
+                            >
+                              <span>{suggestion.description}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </PlacesAutocomplete>
+
                 <label>
                   Plz:
                   <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
