@@ -16,6 +16,12 @@ import CommentIcon from '@material-ui/icons/Comment';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Button from '@material-ui/core/Button';
+import LocationSearchInput from './locationSearchInput';
+
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
 import Customer_DELETE from '../mutations/delete_customer';
 import Customer_UPDATE from '../mutations/update_customer';
@@ -55,9 +61,7 @@ export class Kunden extends Component {
       id: '',
       showFormEdit: false,
       showAddButton: true,
-      showItemButton: false,
     };
-
     this.handleChange = this.handleChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleStreetChange = this.handleStreetChange.bind(this);
@@ -93,14 +97,16 @@ export class Kunden extends Component {
     //alert(this.state.name, this.state.strasse, this.state.plz, this.state.ort);
     //console.log("name", this.state.name, "street", this.state.strasse, "plz", this.state.plz, "city", this.state.ort)
       client.mutate({
-          variables: { name: this.state.name, street: this.state.strasse, plz: this.state.plz, city: this.state.ort },
+          variables: { name: this.state.name, street: this.state.strasse, plz: parseInt(this.state.plz), city: this.state.ort, lat: this.state.latitude, lng: this.state.longitude },
           mutation: gql`
-              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String){
-                  createCustomer(name: $name, street: $street, plz: $plz, city: $city) {
+              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String, $lat: Float, $lng: Float){
+                  createCustomer(name: $name, street: $street, plz: $plz, city: $city, lat: $lat, lng: $lng) {
                       name
                       street
                       plz
                       city
+                      lat
+                      lng
                   }
               }
           `,
@@ -110,7 +116,42 @@ export class Kunden extends Component {
           console.log(error);
       })
   }
-  
+
+  // -------- Form  ----------
+  handleChangeStreet = strasse => {
+    this.setState({ strasse });
+  };
+
+  handleSelectStreet = selected => {
+    this.setState({ isGeocoding: true });
+    var strasseWith = selected;
+    var strasseWithOut = strasseWith.slice(0,(strasseWith.indexOf(',')));
+    this.setState({ strasse: strasseWithOut });
+    geocodeByAddress(selected)
+        //.then(res => getLatLng(res[0]))
+        .then(res => {
+            //console.log(res[0]["address_components"]);
+            this.setState({
+                ort: res[0]["address_components"][2]["long_name"],
+                plz: res[0]["address_components"][6]["long_name"],
+            }) 
+            return getLatLng(res[0]);
+        })
+        .then(({ lat, lng }) => {
+        this.setState({
+            latitude: lat,
+            longitude: lng,
+            isGeocoding: false,
+        });
+            //console.log(this.state.latitude);
+        })
+        .catch(error => {
+        this.setState({ isGeocoding: false });
+        console.log('error', error); // eslint-disable-line no-console
+    })
+  };
+  // ------ Ende Form --------
+
   addCustomer() {
     //alert(1);
     this.setState({showAddButton: false});
@@ -168,11 +209,6 @@ export class Kunden extends Component {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
-    if (this.state.showItemButton === true) {
-      this.setState({showItemButton: false})
-    } else {
-      this.setState({showItemButton: true})
-    }
     if (currentIndex === -1) {
       newChecked.push(value);
     } else {
@@ -203,49 +239,81 @@ export class Kunden extends Component {
             {this.state.showForm ? (
               <form style={{display: 'flex'}}>
                 <label>
-                  <input placeholder="Name" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.name} onChange={this.handleNameChange} />
+                  Name:
+                  <input type="text" value={this.state.name} onChange={this.handleNameChange} />
+                </label>
+
+                <PlacesAutocomplete
+                  value={this.state.strasse}
+                  onChange={this.handleChangeStreet}
+                  onSelect={this.handleSelectStreet}
+                >
+                  {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                    <div>
+                      <input
+                        {...getInputProps({
+                          placeholder: 'Search Places ...',
+                          className: 'location-search-input',
+                        })}
+                      />
+                      <div className="autocomplete-dropdown-container">
+                        {loading && <div>Loading...</div>}
+                        {suggestions.map(suggestion => {
+                          const className = suggestion.active
+                            ? 'suggestion-item--active'
+                            : 'suggestion-item';
+                          // inline style for demonstration purpose
+                          const style = suggestion.active
+                            ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                            : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                          return (
+                            <div
+                              {...getSuggestionItemProps(suggestion, {
+                                className,
+                                style,
+                              })}
+                            >
+                              <span>{suggestion.description}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </PlacesAutocomplete>
+
+                <label>
+                  Plz:
+                  <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
                 </label>
                 <label>
-                  <input placeholder="Straße" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
+                  Ort:
+                  <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
-                <label>
-                  <input placeholder="Plz" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
-                </label>
-                <label>
-                  <input placeholder="Ort" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.ort} onChange={this.handleCityChange}/>
-                </label>
-                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5}} onClick={this.handleSubmit}>
-                  Hinzufügen
-                </Button>
-                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5}} onClick={(e) => this._hideForms(e)}>
-                  Abbrechen
-                </Button>
-                {/* <input style={{backgroundColor: '#009999', color: '#fff'}} type="submit" value="Submit" onClick={this.handleSubmit} />
-                <input style={{borderColor: '#E3E3E3', borderWidth: 1, borderStyle: "solid", color: '#000'}}type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} /> */}
+                <input type="submit" value="Submit" onClick={this.handleSubmit} />
+                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
               </form>
             ): (<div></div>)}    
             {this.state.showFormEdit ? (
               <form style={{display: 'flex'}}>
                 <label>
-                  <input placeholder="Name" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.name} onChange={this.handleNameChange} />
+                  Name:
+                  <input type="text" value={this.state.name} onChange={this.handleNameChange} />
                 </label>
                 <label>
-                  <input placeholder="Straße" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
+                  Straße:
+                  <input type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
                 </label>
                 <label>
-                  <input placeholder="Plz" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
+                  Plz:
+                  <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
                 </label>
                 <label>
-                  <input placeholder="Ort" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.ort} onChange={this.handleCityChange}/>
+                  Ort:
+                  <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
-                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5}} onClick={(e) => this.editCustomer(e)}>
-                  Ändern
-                </Button>
-                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5}} onClick={(e) => this._hideForms(e)}>
-                  Abbrechen
-                </Button>
-                {/* <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
-                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} /> */}
+                <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
+                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
               </form>
             ): (<div></div>)}    
           </div>
@@ -260,23 +328,24 @@ export class Kunden extends Component {
                 const {allCustomers} = data;
                 return (allCustomers.map(customer => (
                     <List>
+                      
                     <ListItem
                       style={{borderColor: '#E3E3E3', borderBottomWidth: 2, borderBottomStyle: 'solid'}}
                       key={customer.id}
                       role={undefined}
                       dense
+                      button
+                      onClick={this.handleToggle(customer)}
                       className={Kunden.ListItem}
                       >
-                      <Checkbox
-                        onClick={this.handleToggle(customer)}
+                      {/* <Checkbox
                         checked={this.state.checked.indexOf(customer) !== -1}
                         tabIndex={-1}
                         disableRipple
-                      />
+                      /> */}
                     <ListItemText style={{fontSize: 18 }} primary={customer.name}/>
-                    <ListItemText style={{fontSize: 15}} secondary={customer.street + ", " + customer.plz + " " + customer.city}/>
-                    {this.state.showItemButton ? (
-                        <ListItemSecondaryAction>
+                    <ListItemText style={{fontSize: 15}} secondary={customer.street + " " + customer.plz + ", " + customer.city}/>
+                      <ListItemSecondaryAction>
                         <IconButton aria-label="Comments" onClick={(e) => this._showFormEdit(e, customer)}>  
                           <EditIcon />
                         </IconButton>
@@ -284,7 +353,6 @@ export class Kunden extends Component {
                           <DeleteIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
-                    ): (<div></div>)}
                     </ListItem>  
                     </List>
                 )));                
