@@ -8,12 +8,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ApolloClient from 'apollo-boost';
 import { graphql, ApolloProvider, Query} from 'react-apollo';
 import gql from 'graphql-tag';
+import CategoryIcon from '@material-ui/icons/Category';
 
 const client = new ApolloClient({
   uri: "https://api.graph.cool/simple/v1/cjna4ydca59580129beayc2nw"
 });
 
-const Types_Query = gql`
+const Types_QUERY = gql`
     {
       allTyps {
         id
@@ -30,18 +31,18 @@ class Map extends Component {
       types: [],
     }
   }
-  async componentWillMount() {
-    await client.query({
-      query: Types_Query
-    }).then(res => 
-      res.data.allTyps.forEach(element => {
-        console.log(element);
-        this.state.types.push(element);                
-      })
-    ); 
-    console.log(this.state.types)
-    //this.setState({tpyes: res.data.allTyps});
-  }
+  // async componentWillMount() {
+  //   await client.query({
+  //     query: Types_QUERY
+  //   }).then(res => 
+  //     res.data.allTyps.forEach(element => {
+  //       console.log(element);
+  //       this.state.types.push(element);                
+  //     })
+  //   ); 
+  //   console.log(this.state.types)
+  //   //this.setState({tpyes: res.data.allTyps});
+  // }
    render() {
 
    const GoogleMapExample = withGoogleMap(props => (
@@ -53,13 +54,15 @@ class Map extends Component {
    ));
 
    return(
+    <ApolloProvider client={client}>
       <div>
         <GoogleMapExample
           containerElement={ <div style={{ height: 688, width: 823, borderRightColor: '#EAEAEA', borderRightWidth: 3, paddingRight: 63, borderRightStyle: 'solid' }} /> }
           mapElement={ <div style={{ height: `100%` }} /> }
         />
         <div style={{position: 'absolute', right: 200, top: 250}}>
-          <label>Liste Worker Aufgaben</label>
+          <label>Liste Worker Aufgaben</label> 
+          {/* ---------------- Worker Liste mit Aufgaben -------------------- */}
           <List>
             <ListItem>
               <ListItemText primary={"Lorenz Pschenitschnigg"}></ListItemText>
@@ -76,17 +79,45 @@ class Map extends Component {
           </List>
         </div>
         <div style={{display: 'flex', paddingTop: 15, paddingBottom: 30}}>
-            
-              <List>
+        <Query query={Types_QUERY}>
+              {({loading, data, error}) => {
+                console.log(data);
+                //this.setState({types: data});
+                if (loading) {
+                  return <p>Loading ...</p>;
+                }
+                if (error) { 
+                  return <p>{error.message}</p>;
+                }
+                const {allTyps} = data;
+                //console.log("alltypes", allTypes);
+                console.log('data', data);
+                return (allTyps.map(typ => (
+                    <List>
+                    <ListItem
+                      //style={{borderColor: '#E3E3E3', borderWidth: 2, borderStyle: 'solid'}}
+                      key={typ.id}
+                      role={undefined}
+                      >
+                      <CategoryIcon style={{color: typ.color }} />
+                    <ListItemText style={{fontSize: 18 }} primary={typ.name}/>
+                    </ListItem>  
+                    </List>
+                )));                
+                } }
+                
+            </Query>
+              {/* <List>
               {this.state.types.map(typ => (
                 <ListItem>
                   <ListItemText>{typ.name}</ListItemText>
                   <ListItemText>{typ.color}</ListItemText>
                 </ListItem>
               ))}
-              </List> 
+              </List>  */}
         </div>
       </div>
+      </ApolloProvider>
     );
    }
 };
