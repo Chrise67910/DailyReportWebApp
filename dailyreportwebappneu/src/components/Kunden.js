@@ -16,6 +16,12 @@ import CommentIcon from '@material-ui/icons/Comment';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Button from '@material-ui/core/Button';
+//import LocationSearchInput from './locationSearchInput';
+
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
 import Customer_DELETE from '../mutations/delete_customer';
 import Customer_UPDATE from '../mutations/update_customer';
@@ -56,15 +62,15 @@ export class Kunden extends Component {
       ort: '',
       id: '',
       showFormEdit: false,
+      showAddButton: true,
     };
-
     this.handleChange = this.handleChange.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleStreetChange = this.handleStreetChange.bind(this);
     this.handlePlzChange = this.handlePlzChange.bind(this);
     this.handleCityChange = this.handleCityChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handlenameChange = this.handlecitychange.bind(this)
+    //this.handlenameChange = this.handlecitychange.bind(this)
   }
 
   state = {
@@ -94,14 +100,16 @@ export class Kunden extends Component {
     //alert(this.state.name, this.state.strasse, this.state.plz, this.state.ort);
     //console.log("name", this.state.name, "street", this.state.strasse, "plz", this.state.plz, "city", this.state.ort)
       client.mutate({
-          variables: { name: this.state.name, street: this.state.strasse, plz: this.state.plz, city: this.state.ort },
+          variables: { name: this.state.name, street: this.state.strasse, plz: parseInt(this.state.plz), city: this.state.ort, lat: this.state.latitude, lng: this.state.longitude },
           mutation: gql`
-              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String){
-                  createCustomer(name: $name, street: $street, plz: $plz, city: $city) {
+              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String, $lat: Float, $lng: Float){
+                  createCustomer(name: $name, street: $street, plz: $plz, city: $city, lat: $lat, lng: $lng) {
                       name
                       street
                       plz
                       city
+                      lat
+                      lng
                   }
               }
           `,
@@ -111,12 +119,62 @@ export class Kunden extends Component {
           console.log(error);
       })
   }
-  
-  showForm() {
+
+  // -------- Form  ----------
+  handleChangeStreet = strasse => {
+    this.setState({ strasse });
+  };
+
+  handleSelectStreet = selected => {
+    this.setState({ isGeocoding: true });
+    var strasseWith = selected;
+    var strasseWithOut = strasseWith.slice(0,(strasseWith.indexOf(',')));
+    this.setState({ strasse: strasseWithOut });
+    geocodeByAddress(selected)
+        //.then(res => getLatLng(res[0]))
+        .then(res => {
+            //console.log(res[0]["address_components"]);
+            this.setState({
+                ort: res[0]["address_components"][2]["long_name"],
+                plz: res[0]["address_components"][6]["long_name"],
+            }) 
+            return getLatLng(res[0]);
+        })
+        .then(({ lat, lng }) => {
+        this.setState({
+            latitude: lat,
+            longitude: lng,
+            isGeocoding: false,
+        });
+            //console.log(this.state.latitude);
+        })
+        .catch(error => {
+        this.setState({ isGeocoding: false });
+        console.log('error', error); // eslint-disable-line no-console
+    })
+  };
+  // ------ Ende Form --------
+
+  addCustomer() {
     //alert(1);
+    this.setState({showAddButton: false});
     this.setState({showForm: true});
+    this.setState({showFormEdit: false});
+    this.setState({id: ''});
+    this.setState({name: ''});
+    this.setState({strasse: ''});
+    this.setState({plz: ''});
+    this.setState({ort: ''});
+  }
+  _hideForms(event) {
+    this.setState({showFormEdit: false});
+    this.setState({showForm: false});
+    this.setState({showAddButton: true});
+    event.preventDefault();
   }
   _showFormEdit(e, customer) {
+    this.setState({showAddButton: false});
+    this.setState({showForm: false});
     this.setState({id: customer.id});
     this.setState({showFormEdit: true});
     this.setState({name: customer.name});
@@ -177,19 +235,57 @@ export class Kunden extends Component {
         <ApolloProvider client={client}>
           <div className="Kunden">
           <div style={{ height: 100, borderColor: '#E3E3E3', borderBottomWidth: 3, borderBottomStyle: 'solid'}}>
+          {this.state.showAddButton ? (
             <Button style={{backgroundColor: '#009999', color: '#fff', position: 'absolute', right: 100}} onClick={(e) => this.addCustomer(e)}>
               Hinzufügen
             </Button>
+          ): (<div></div>)}
             {this.state.showForm ? (
               <form style={{display: 'flex'}}>
                 <label>
                   Name:
                   <input type="text" value={this.state.name} onChange={this.handleNameChange} />
                 </label>
-                <label>
-                  Straße:
-                  <input type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
-                </label>
+
+                <PlacesAutocomplete
+                  value={this.state.strasse}
+                  onChange={this.handleChangeStreet}
+                  onSelect={this.handleSelectStreet}
+                >
+                  {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                    <div>
+                      <input
+                        {...getInputProps({
+                          placeholder: 'Search Places ...',
+                          className: 'location-search-input',
+                        })}
+                      />
+                      <div className="autocomplete-dropdown-container">
+                        {loading && <div>Loading...</div>}
+                        {suggestions.map(suggestion => {
+                          const className = suggestion.active
+                            ? 'suggestion-item--active'
+                            : 'suggestion-item';
+                          // inline style for demonstration purpose
+                          const style = suggestion.active
+                            ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                            : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                          return (
+                            <div
+                              {...getSuggestionItemProps(suggestion, {
+                                className,
+                                style,
+                              })}
+                            >
+                              <span>{suggestion.description}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </PlacesAutocomplete>
+
                 <label>
                   Plz:
                   <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
@@ -199,6 +295,7 @@ export class Kunden extends Component {
                   <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
                 <input type="submit" value="Submit" onClick={this.handleSubmit} />
+                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
               </form>
             ): (<div></div>)}    
             {this.state.showFormEdit ? (
@@ -220,6 +317,7 @@ export class Kunden extends Component {
                   <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
                 <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
+                <input type="submit" value="Abbrechen" onClick={(e) => this._hideForms(e)} />
               </form>
             ): (<div></div>)}    
           </div>
@@ -279,107 +377,6 @@ export class Kunden extends Component {
 
   }
 }
-// function CustomerForm() {
-//   return(
-//     <form style={{display: 'flex'}}>
-//       <label>
-//         Name:
-//         <input type="text" />
-//       </label>
-//       <label>
-//         Straße:
-//         <input type="text"/>
-//       </label>
-//       <label>
-//         Plz:
-//         <input type="text" />
-//       </label>
-//       <label>
-//         Ort:
-//         <input type="text" />
-//       </label>
-//       <input type="submit" value="Submit" />
-//     </form>
-//   );
-// }
-
-
-// export class Customer extends Component {
-
-//       state = {
-//         showingInfoWindow: false,
-//         activeMarker: {},
-//         selectedPlace: {},
-//         checked: [0]
-//       }
-
-
-
-
-//     handleToggle = value => () => {
-//       const { checked } = this.state;
-//       const currentIndex = checked.indexOf(value);
-//       const newChecked = [...checked];
-
-//       if (currentIndex === -1) {
-//         newChecked.push(value);
-//       } else {
-//         newChecked.splice(currentIndex, 1);
-//       }
-
-//       this.setState({
-//         checked: newChecked,
-//       });
-//     };
-
-//     render() {
-//       const style = {
-//         width: '50vw',
-//         height: '75vh',
-//         'marginLeft': 'auto',
-//         'marginRight': 'auto'
-//       }
-//       return (
-//         <ApolloProvider client={client}>
-//             <div className="Customer">
-//               <Query query={Customers_QUERY}>
-//                 {({loading, data}) => {
-//                   if(loading) return 'Loading...';
-//                   const {allCustomers} = data;
-//                   //return allCustomers.map(customer => <h1>{customer.name}</h1>);
-
-//                   return (allCustomers.map(customer => (
-//                     <List>
-//                     <ListItem
-//                       key={customer}
-//                       role={undefined}
-//                       dense
-//                       button
-//                       onClick={this.handleToggle(customer)}
-//                       className={Customer.ListItem}
-//                       >
-//                       <Checkbox
-//                         checked={this.state.checked.indexOf(customer) !== -1}
-//                         tabIndex={-1}
-//                         disableRipple
-//                       />
-//                     <ListItemText primary={customer.name}/>
-//                       <ListItemSecondaryAction>
-//                         <IconButton aria-label="Comments">
-//                           <CommentIcon />
-//                         </IconButton>
-//                       </ListItemSecondaryAction>
-//                     </ListItem>
-//                     </List>
-//                   )));
-//                 }};
-//               </Query>
-//             </div>
-//       </ApolloProvider>
-//     );
-//   }
-// }
-
 const styles = theme => ({
   root: {
     width: '100%',
