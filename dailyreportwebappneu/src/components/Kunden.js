@@ -298,10 +298,10 @@ export class Kunden extends Component {
                 <label>
                   <input placeholder="Ort" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
-                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5}} onClick={this.handleSubmit}>
+                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5, height: 36, width: 117.59}} onClick={this.handleSubmit}>
                   Hinzufügen
                 </Button>
-                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5}} onClick={(e) => this._hideForms(e)}>
+                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5, height: 36, width: 117.59}} onClick={(e) => this._hideForms(e)}>
                   Abbrechen
                 </Button>
                 {/* <input style={{backgroundColor: '#009999', color: '#fff'}} type="submit" value="Submit" onClick={this.handleSubmit} />
@@ -362,10 +362,10 @@ export class Kunden extends Component {
                 <label>
                   <input placeholder="Ort" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
-                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5}} onClick={(e) => this.editCustomer(e)}>
+                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5, height: 36, width: 117.59}} onClick={(e) => this.editCustomer(e)}>
                   Ändern
                 </Button>
-                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5}} onClick={(e) => this._hideForms(e)}>
+                <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5, height: 36, width: 117.59}} onClick={(e) => this._hideForms(e)}>
                   Abbrechen
                 </Button>
                 {/* <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
