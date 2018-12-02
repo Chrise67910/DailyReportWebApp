@@ -17,6 +17,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Button from '@material-ui/core/Button';
 
+import Customer_DELETE from '../mutations/delete_customer';
+import Customer_UPDATE from '../mutations/update_customer';
+
 const client = new ApolloClient({
   uri: "https://api.graph.cool/simple/v1/cjna4ydca59580129beayc2nw"
 });
@@ -46,10 +49,20 @@ export class Kunden extends Component {
       activeMarker: {},
       selectedPlace: {},
       checked: [0],
-      showForm: false
+      showForm: false,
+      name: '',
+      strasse: '',
+      plz: '',
+      ort: '',
+      id: '',
+      showFormEdit: false,
     };
 
-    this.handlecitychange = this.handlecitychange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleStreetChange = this.handleStreetChange.bind(this);
+    this.handlePlzChange = this.handlePlzChange.bind(this);
+    this.handleCityChange = this.handleCityChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlenameChange = this.handlecitychange.bind(this)
   }
@@ -60,61 +73,80 @@ export class Kunden extends Component {
     selectedPlace: {},
     checked: [0]
   }
-  handlenameChange(e) {
-    this.setState({name: e.target.value});
+  handleChange(event) {
+    this.setState({name: event.target.value});
   }
-
-  handlecitychange(e){
-    this.setState({city: e.target.value});
-  }  
-
-  addCustomer = (e) => {
-    client.mutate({
-      variables: { title: card.title, laneId: laneId },
-      mutation: gql`
-          mutation createTrelloCard($title: String!, $laneId: String!){
-              createTrelloCard(title: $title, laneId: $laneId) {
-                  id
-                  title
-                  laneId
+  handleNameChange(event) {
+    this.setState({name: event.target.value});
+  }
+  handleStreetChange(event) {
+    this.setState({strasse: event.target.value});
+  }
+  handlePlzChange(event) {
+    this.setState({plz: parseInt(event.target.value)});
+  }
+  handleCityChange(event) {
+    this.setState({ort: event.target.value});
+  }
+  handleSubmit(event) {
+    //alert('A name was submitted: ' + this.state.value);
+    event.preventDefault();
+    //alert(this.state.name, this.state.strasse, this.state.plz, this.state.ort);
+    //console.log("name", this.state.name, "street", this.state.strasse, "plz", this.state.plz, "city", this.state.ort)
+      client.mutate({
+          variables: { name: this.state.name, street: this.state.strasse, plz: this.state.plz, city: this.state.ort },
+          mutation: gql`
+              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String){
+                  createCustomer(name: $name, street: $street, plz: $plz, city: $city) {
+                      name
+                      street
+                      plz
+                      city
+                  }
               }
-          }
-      `,
-  }).then((data) => {
-      //this.fetchCards();
-      //this.forceUpdate();
-      // var dataStat = this.state.boardData;
-      // console.log(dataStat);
-      // dataStat.lanes.forEach(lane => {
-      //   if (data.data.createTrelloCard.laneId === lane.id) {
-      //     lane.cards.forEach(cardE => {
-      //       if (data.data.createTrelloCard.title === cardE.title) {
-      //         cardE.id = data.data.createTrelloCard.id;
-      //       }
-      //     })
-      //   }
-      // })
-      // console.log(dataStat);
-      // this.setState({boardData: dataStat})
-      // console.log(data.data.createTrelloCard.id);
-      //card.id = data.data.createTrelloCard.id;
-      window.location.reload();
-  }).catch(error => {
-      console.log(error);
-  })
+          `,
+      }).then((data) => {
+          window.location.reload();
+      }).catch(error => {
+          console.log(error);
+      })
   }
   
   showForm() {
     //alert(1);
     this.setState({showForm: true});
   }
-
-  editCustomer = (customer) => () =>  {
-    this.setState({showForm: true});
+  _showFormEdit(e, customer) {
+    this.setState({id: customer.id});
+    this.setState({showFormEdit: true});
+    this.setState({name: customer.name});
+    this.setState({strasse: customer.street});
+    this.setState({plz: customer.plz});
+    this.setState({ort: customer.city});
   }
-
+  editCustomer(event) {
+    event.preventDefault();
+    //console.log(customer.name);
+    console.log("name", this.state.name, "street", this.state.strasse, "plz", this.state.plz, "city", this.state.ort);
+      client.mutate({
+          variables: { id: this.state.id, name: this.state.name, street: this.state.strasse, plz: this.state.plz, city: this.state.ort },
+          mutation: Customer_UPDATE,
+      }).then(() => {
+        window.location.reload();
+      }).catch(error => {
+          console.log(error);
+      });
+  }
   deleteCustomer = (customer)  => () => {
-    console.log(customer);
+    console.log(customer);  
+      client.mutate({
+          variables: { id: customer.id },
+          mutation: Customer_DELETE,
+      }).then(() => {
+        window.location.reload();
+      }).catch(error => {
+          console.log(error);
+      });
   }
 
   handleToggle = value => () => {
@@ -149,7 +181,46 @@ export class Kunden extends Component {
               Hinzufügen
             </Button>
             {this.state.showForm ? (
-              <CustomerForm />
+              <form style={{display: 'flex'}}>
+                <label>
+                  Name:
+                  <input type="text" value={this.state.name} onChange={this.handleNameChange} />
+                </label>
+                <label>
+                  Straße:
+                  <input type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
+                </label>
+                <label>
+                  Plz:
+                  <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
+                </label>
+                <label>
+                  Ort:
+                  <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
+                </label>
+                <input type="submit" value="Submit" onClick={this.handleSubmit} />
+              </form>
+            ): (<div></div>)}    
+            {this.state.showFormEdit ? (
+              <form style={{display: 'flex'}}>
+                <label>
+                  Name:
+                  <input type="text" value={this.state.name} onChange={this.handleNameChange} />
+                </label>
+                <label>
+                  Straße:
+                  <input type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
+                </label>
+                <label>
+                  Plz:
+                  <input type='text' value={this.state.plz} onChange={this.handlePlzChange}/>
+                </label>
+                <label>
+                  Ort:
+                  <input type="text" value={this.state.ort} onChange={this.handleCityChange}/>
+                </label>
+                <input type="Submit" value="Edit" onClick={(e) => this.editCustomer(e)} />
+              </form>
             ): (<div></div>)}    
           </div>
             <Query query={Customers_QUERY}>
@@ -181,7 +252,7 @@ export class Kunden extends Component {
                     <ListItemText style={{fontSize: 18 }} primary={customer.name}/>
                     <ListItemText style={{fontSize: 15}} secondary={customer.street + " " + customer.plz + ", " + customer.city}/>
                       <ListItemSecondaryAction>
-                        <IconButton aria-label="Comments" onClick={this.editCustomer(customer)}>  
+                        <IconButton aria-label="Comments" onClick={(e) => this._showFormEdit(e, customer)}>  
                           <EditIcon />
                         </IconButton>
                         
@@ -208,25 +279,29 @@ export class Kunden extends Component {
 
   }
 }
-function CustomerForm() {
-  return(
-    <form style={{display: 'flex'}}>
-      <label>
-        Name:
-        <input type="text"/>
-      </label>
-      <label>
-        Straße:
-        <input type="text" />
-      </label>
-      <label>
-        Plz:
-        <input type="text" />
-      </label>
-      <input type="submit" value="Submit" />
-    </form>
-  );
-}
+// function CustomerForm() {
+//   return(
+//     <form style={{display: 'flex'}}>
+//       <label>
+//         Name:
+//         <input type="text" />
+//       </label>
+//       <label>
+//         Straße:
+//         <input type="text"/>
+//       </label>
+//       <label>
+//         Plz:
+//         <input type="text" />
+//       </label>
+//       <label>
+//         Ort:
+//         <input type="text" />
+//       </label>
+//       <input type="submit" value="Submit" />
+//     </form>
+//   );
+// }
 
 
 // export class Customer extends Component {
