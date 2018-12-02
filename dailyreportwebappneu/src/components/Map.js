@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ApolloClient from 'apollo-boost';
 import { graphql, ApolloProvider, Query} from 'react-apollo';
 import gql from 'graphql-tag';
+//import { worker } from 'cluster';
 
 const client = new ApolloClient({
   uri: "https://api.graph.cool/simple/v1/cjna4ydca59580129beayc2nw"
@@ -20,6 +21,13 @@ const Types_Query = gql`
         name
         color
       }
+
+      allWorkers {
+        id
+        name
+        street
+        workingOn
+      }
     }
   `;
 
@@ -28,6 +36,7 @@ class Map extends Component {
     super(props);
     this.state={
       types: [],
+      workers: [],
     }
   }
   async componentWillMount() {
@@ -40,6 +49,17 @@ class Map extends Component {
       })
     ); 
     console.log(this.state.types)
+
+    await client.query({
+      query: Types_Query
+    }).then(res => 
+      res.data.allWorkers.forEach(element => {
+        console.log(element);
+        this.state.workers.push(element);                
+      })
+    ); 
+    console.log(this.state.workers)
+    
     //this.setState({tpyes: res.data.allTyps});
   }
    render() {
@@ -60,20 +80,22 @@ class Map extends Component {
         />
         <div style={{position: 'absolute', right: 200, top: 250}}>
           <label>Liste Worker Aufgaben</label>
+          {this.state.workers.map(worker => (
           <List>
             <ListItem>
-              <ListItemText primary={"Lorenz Pschenitschnigg"}></ListItemText>
+              <ListItemText>{worker.name}</ListItemText>
             </ListItem>
             <ListItem>
-              <ListItemText primary={"Christopher Nagel"}></ListItemText>
+              <ListItemText>{worker.name}</ListItemText>
             </ListItem>
             <ListItem>
-              <ListItemText primary={"Jakob Sturm"}></ListItemText>
+              <ListItemText>{worker.name}</ListItemText>
             </ListItem>
             <ListItem>
-              <ListItemText primary={"Julia Moosbrugger"}></ListItemText>
+              <ListItemText>{worker.name}</ListItemText>
             </ListItem>
           </List>
+          ))}
         </div>
         <div style={{display: 'flex', paddingTop: 15, paddingBottom: 30}}>
             
