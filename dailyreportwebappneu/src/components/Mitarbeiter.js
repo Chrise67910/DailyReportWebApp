@@ -66,7 +66,6 @@ export class Mitarbeiter extends Component {
       showAddButton: true,
       showItemButton: false,
     };
-    this.handleChange = this.handleChange.bind(this);
     this.handleVornameChange = this.handleVornameChange.bind(this);
     this.handleNachnameChange = this.handleNachnameChange.bind(this);
     this.handleStreetChange = this.handleStreetChange.bind(this);
@@ -374,7 +373,7 @@ export class Mitarbeiter extends Component {
                 <label>
                   <input placeholder="Ort" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.ort} onChange={this.handleCityChange}/>
                 </label>
-                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5, height: 36, width: 117.59}} onClick={(e) => this.editCustomer(e)}>
+                <Button style={{backgroundColor: '#009999', color: '#fff', marginLeft: 5, marginRight: 5, height: 36, width: 117.59}} onClick={(e) => this.editMitarbeiter(e)}>
                   Ändern
                 </Button>
                 <Button style={{backgroundColor: '#f4f4f4', color: '#000', marginLeft: 5, marginRight: 5, height: 36, width: 117.59}} onClick={(e) => this._hideForms(e)}>

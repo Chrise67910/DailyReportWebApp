@@ -45,7 +45,7 @@ class Aufgaben extends Component {
     }).then(res => 
       res.data.allWorkers.forEach(element => {
         console.log(element);
-        var lane = {'id': element.id, 'title': element.name, 'cards': [],'style': { borderRadius: 7, backgroundColor: '#f4f4f4'},'addCardLink': '+ Neue Aufgabe...'};
+        var lane = {'id': element.id, 'title': element.vorname + " " + element.nachname, 'cards': [],'style': { borderRadius: 7, backgroundColor: '#f4f4f4'},'addCardLink': '+ Neue Aufgabe...'};
         jsnRes.lanes.push(lane);                
       })
     ); 

@@ -4,7 +4,8 @@ const all_Worker = gql`
   {
     allWorkers {
       id
-      name
+      vorname
+      nachname
     }
   }
 `;

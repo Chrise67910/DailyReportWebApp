@@ -6,6 +6,7 @@ import Kunden from './components/Kunden';
 import Uebersicht from './components/Uebersicht';
 import Header from './components/Header';
 import Aufgaben from './components/Aufgaben';
+import Mitarbeiter from './components/Mitarbeiter';
 
 import "./index.css";
 import "./normalize.css";
@@ -26,6 +27,7 @@ class App extends Component {
             <Route path="/kunden" component={Kunden} />
             <Route exact path="/" component={Uebersicht} />
             <Route exact path="/aufgaben" component={Aufgaben} />
+            <Route exact path ="/mitarbeiter" component={Mitarbeiter} />
           </Switch>
         </div>
       </BrowserRouter>

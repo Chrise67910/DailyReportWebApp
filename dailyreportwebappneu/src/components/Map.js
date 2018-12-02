@@ -31,7 +31,8 @@ const Types_QUERY = gql`
 
       allWorkers {
         id
-        name
+        vorname
+        nachname
         street
         workingOn{
           id
@@ -134,7 +135,7 @@ class Map extends Component {
             <div style={{backgroundColor: "#F4F4F4", borderRadius: 17}}>
               <ListItem>
                 <Accessible style={{color: worker.workingOn.typ.color }} />
-                <ListItemText style={{fontWeight: "bold"}} primary={worker.name}/>
+                <ListItemText style={{fontWeight: "bold"}} primary={worker.vorname + " " + worker.nachname}/>
               </ListItem>
               <ListItem>
                 <ListItemText primary={worker.workingOn.customer.name}/>
