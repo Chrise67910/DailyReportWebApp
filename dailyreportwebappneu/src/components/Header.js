@@ -3,25 +3,33 @@ import { BrowserRouter, Route, Switch, NavLink  } from 'react-router-dom';
 import ContactIcon from '@material-ui/icons/Contacts';
 import PlaceIcon from '@material-ui/icons/Place';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import PersonIcon from '@material-ui/icons/Person';
+
 const Header = () => (
-    <header style={{display: 'flex', paddingBottom: 35}}>
+    <header style={{display: 'flex', paddingBottom: 35, textAlign: 'center'}}>
         <NavLink exact className="box_nav" activeClassName="active" to="/">
-            <div>
+            <div style={{display: 'column'}}>
               <PlaceIcon />
-              Übersicht
+              <label>Übersicht</label>
             </div>
           </NavLink >
           <NavLink  className="box_nav" activeClassName="active" to="/kunden">
-            <div>
+            <div style={{display: 'column'}}>
               <ContactIcon />
-              Kunden
+              <label>Kunden</label>
             </div>
           </NavLink >
           <NavLink  className="box_nav" activeClassName="active" to="/aufgaben">
-            <div>
+            <div style={{display: 'column'}}>
               <AssignmentIcon />
-              Aufgaben
-            </div>
+              <label>Aufgaben</label>
+            </div >
+          </NavLink >
+          <NavLink  className="box_nav" activeClassName="active" to="/mitarbeiter">
+            <div style={{display: 'column'}}>
+              <PersonIcon />
+              <label>Mitarbeiter</label>
+            </div >
           </NavLink >
           <img style={{height: 100, width: 'auto', position: 'absolute', right: 100}} src={require('./siemens_logo.png')} />
     </header> 

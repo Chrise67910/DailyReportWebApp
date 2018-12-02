@@ -23,30 +23,30 @@ import PlacesAutocomplete, {
   getLatLng,
 } from 'react-places-autocomplete';
 
-import Customer_DELETE from '../mutations/delete_customer';
-import Customer_UPDATE from '../mutations/update_customer';
+import Mitarbeiter_DELETE from '../mutations/delete_mitarbeiter';
+import Mitarbeiter_UPDATE from '../mutations/update_mitarbeiter';
+import { Kunden } from './Kunden';
 
 const client = new ApolloClient({
   uri: "https://api.graph.cool/simple/v1/cjna4ydca59580129beayc2nw"
 });
 
-const Customers_QUERY = gql`
+const Mitarbeiter_QUERY = gql`
     {
-      allCustomers {
+      allWorkers {
         id
-        name
-        city
-        plz
+        vorname
+        nachname
         street
-        lat
-        lng
+        plz
+        city
       }
 
     }
   `;
 
   
-export class Kunden extends Component {
+export class Mitarbeiter extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -56,7 +56,8 @@ export class Kunden extends Component {
       selectedPlace: {},
       checked: [0],
       showForm: false,
-      name: '',
+      vorname: '',
+      nachname: '',
       strasse: '',
       plz: '',
       ort: '',
@@ -66,7 +67,8 @@ export class Kunden extends Component {
       showItemButton: false,
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleVornameChange = this.handleVornameChange.bind(this);
+    this.handleNachnameChange = this.handleNachnameChange.bind(this);
     this.handleStreetChange = this.handleStreetChange.bind(this);
     this.handlePlzChange = this.handlePlzChange.bind(this);
     this.handleCityChange = this.handleCityChange.bind(this);
@@ -80,11 +82,12 @@ export class Kunden extends Component {
     selectedPlace: {},
     checked: [0]
   }
-  handleChange(event) {
-    this.setState({name: event.target.value});
+
+  handleVornameChange(event) {
+    this.setState({vorname: event.target.value});
   }
-  handleNameChange(event) {
-    this.setState({name: event.target.value});
+  handleNachnameChange(event) {
+    this.setState({nachname: event.target.value});
   }
   handleStreetChange(event) {
     this.setState({strasse: event.target.value});
@@ -101,16 +104,15 @@ export class Kunden extends Component {
     //alert(this.state.name, this.state.strasse, this.state.plz, this.state.ort);
     //console.log("name", this.state.name, "street", this.state.strasse, "plz", this.state.plz, "city", this.state.ort)
       client.mutate({
-          variables: { name: this.state.name, street: this.state.strasse, plz: parseInt(this.state.plz), city: this.state.ort, lat: this.state.latitude, lng: this.state.longitude },
+          variables: { vorname: this.state.vorname, nachname: this.state.nachname, street: this.state.strasse, plz: parseInt(this.state.plz), city: this.state.ort},
           mutation: gql`
-              mutation createCustomer($name: String!, $street: String, $plz: Int, $city: String, $lat: Float, $lng: Float){
-                  createCustomer(name: $name, street: $street, plz: $plz, city: $city, lat: $lat, lng: $lng) {
-                      name
+              mutation createWorker($vorname: String!, $nachname: String!, $street: String, $plz: Int, $city: String){
+                  createWorker(vorname: $vorname, nachname: $nachname, street: $street, plz: $plz, city: $city) {
+                      vorname
+                      nachname
                       street
                       plz
                       city
-                      lat
-                      lng
                   }
               }
           `,
@@ -156,13 +158,14 @@ export class Kunden extends Component {
   };
   // ------ Ende Form --------
 
-  addCustomer() {
+  addMitarbeiter() {
     //alert(1);
     this.setState({showAddButton: false});
     this.setState({showForm: true});
     this.setState({showFormEdit: false});
     this.setState({id: ''});
-    this.setState({name: ''});
+    this.setState({vorname: ''});
+    this.setState({nachname: ''});
     this.setState({strasse: ''});
     this.setState({plz: ''});
     this.setState({ort: ''});
@@ -173,34 +176,35 @@ export class Kunden extends Component {
     this.setState({showAddButton: true});
     event.preventDefault();
   }
-  _showFormEdit(e, customer) {
+  _showFormEdit(e, worker) {
     this.setState({showAddButton: false});
     this.setState({showForm: false});
-    this.setState({id: customer.id});
+    this.setState({id: worker.id});
     this.setState({showFormEdit: true});
-    this.setState({name: customer.name});
-    this.setState({strasse: customer.street});
-    this.setState({plz: customer.plz});
-    this.setState({ort: customer.city});
+    this.setState({vorname: worker.vorname});
+    this.setState({nachname: worker.nachname});
+    this.setState({strasse: worker.street});
+    this.setState({plz: worker.plz});
+    this.setState({ort: worker.city});
   }
-  editCustomer(event) {
+  editMitarbeiter(event) {
     event.preventDefault();
     //console.log(customer.name);
-    console.log("name", this.state.name, "street", this.state.strasse, "plz", parseInt(this.state.plz), "city", this.state.ort, "lat", this.state.latitude, "lng", this.state.longitude);
+    console.log("vorname", this.state.vorname, "nachname", this.state.nachname, "street", this.state.strasse, "plz", parseInt(this.state.plz), "city", this.state.ort);
       client.mutate({
-          variables: { id: this.state.id, name: this.state.name, street: this.state.strasse, plz: parseInt(this.state.plz), city: this.state.ort, lat: this.state.latitude, lng: this.state.lng },
-          mutation: Customer_UPDATE,
+          variables: { id: this.state.id, vorname: this.state.vorname, nachname: this.state.nachname, street: this.state.strasse, plz: parseInt(this.state.plz), city: this.state.ort},
+          mutation: Mitarbeiter_UPDATE,
       }).then(() => {
         window.location.reload();
       }).catch(error => {
           console.log(error);
       });
   }
-  deleteCustomer = (customer)  => () => {
-    console.log(customer);  
+  deleteMitarbeiter = (worker)  => () => {
+    console.log(worker);  
       client.mutate({
-          variables: { id: customer.id },
-          mutation: Customer_DELETE,
+          variables: { id: worker.id },
+          mutation: Mitarbeiter_DELETE,
       }).then(() => {
         window.location.reload();
       }).catch(error => {
@@ -242,14 +246,17 @@ export class Kunden extends Component {
           <div className="Kunden">
           <div style={{ height: 100, borderColor: '#E3E3E3', borderBottomWidth: 3, borderBottomStyle: 'solid'}}>
           {this.state.showAddButton ? (
-            <Button style={{backgroundColor: '#009999', color: '#fff', position: 'absolute', right: 100}} onClick={(e) => this.addCustomer(e)}>
+            <Button style={{backgroundColor: '#009999', color: '#fff', position: 'absolute', right: 100}} onClick={(e) => this.addMitarbeiter(e)}>
               Hinzufügen
             </Button>
           ): (<div></div>)}
             {this.state.showForm ? (
               <form style={{display: 'flex'}}>
                 <label>
-                  <input placeholder="Name" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.name} onChange={this.handleNameChange} />
+                  <input placeholder="Vorname" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.vorname} onChange={this.handleVornameChange} />
+                </label>
+                <label>
+                  <input placeholder="Nachname" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.nachname} onChange={this.handleNachnameChange} />
                 </label>
                 {/* <label>
                   <input placeholder="Straße" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
@@ -313,7 +320,10 @@ export class Kunden extends Component {
             {this.state.showFormEdit ? (
               <form style={{display: 'flex'}}>
                 <label>
-                  <input placeholder="Name" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.name} onChange={this.handleNameChange} />
+                  <input placeholder="Vorname" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.vorname} onChange={this.handleVornameChange} />
+                </label>
+                <label>
+                  <input placeholder="Nachname" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.nachname} onChange={this.handleNachnameChange} />
                 </label>
                 {/* <label>
                   <input placeholder="Straße" style={{backgroundColor: '#F1F1F1', borderRadius: 6, border: 'none', padding: 5, marginLeft: 10, marginRight: 10}} type="text" value={this.state.strasse} onChange={this.handleStreetChange}/>
@@ -375,20 +385,21 @@ export class Kunden extends Component {
               </form>
             ): (<div></div>)}    
           </div>
-            <Query query={Customers_QUERY}>
+            <Query query={Mitarbeiter_QUERY}>
               {({loading, data, error}) => {
+                  console.log(data);
                 if (loading) {
                   return <p>Loading ...</p>;
                 }
                 if (error) { 
                   return <p>{error.message}</p>;
                 }
-                const {allCustomers} = data;
-                return (allCustomers.map(customer => (
+                const {allWorkers} = data;
+                return (allWorkers.map(worker => (
                     <List>
                     <ListItem
                       style={{borderColor: '#E3E3E3', borderBottomWidth: 2, borderBottomStyle: 'solid'}}
-                      key={customer.id}
+                      key={worker.id}
                       role={undefined}
                       dense
                       className={Kunden.ListItem}
@@ -399,15 +410,15 @@ export class Kunden extends Component {
                         tabIndex={-1}
                         disableRipple
                       /> */}
-                    <ListItemText style={{fontSize: 18, width: 400 }} primary={customer.name}/>
-                    <ListItemText style={{fontSize: 15, textAlign: 'left', flex: 1, flexBasis: '75%'}} secondary={customer.street + ", " + customer.plz + " " + customer.city}/>
+                    <ListItemText style={{fontSize: 18, width: 400 }} primary={worker.vorname + " " + worker.nachname}/>
+                    <ListItemText style={{fontSize: 15, textAlign: 'left', flex: 1, flexBasis: '75%'}} secondary={worker.street + ", " + worker.plz + " " + worker.city}/>
                     {/* <ListItemText style={{fontSize: 15 }} secondary={customer.lat + "/" + customer.lng}/> */}
                         <ListItemSecondaryAction>
-                        <IconButton aria-label="Comments" onClick={(e) => this._showFormEdit(e, customer)}>  
+                        <IconButton aria-label="Comments" onClick={(e) => this._showFormEdit(e, worker)}>  
                           <EditIcon />
                         </IconButton>
                         
-                        <IconButton aria-label="Comments" onClick={this.deleteCustomer(customer)}>
+                        <IconButton aria-label="Comments" onClick={this.deleteMitarbeiter(worker)}>
                           <DeleteIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
@@ -439,4 +450,4 @@ const styles = theme => ({
   },
 });
 
-export default withStyles(styles)(Kunden);
+export default withStyles(styles)(Mitarbeiter);
