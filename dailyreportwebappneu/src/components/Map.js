@@ -134,7 +134,7 @@ class Map extends Component {
           <List >
             <div style={{backgroundColor: "#F4F4F4", borderRadius: 17}}>
               <ListItem>
-                <Accessible style={{color: worker.workingOn.typ.color }} />
+                <Room style={{color: worker.workingOn.typ.color }} />
                 <ListItemText style={{fontWeight: "bold"}} primary={worker.vorname + " " + worker.nachname}/>
               </ListItem>
               <ListItem>
@@ -177,7 +177,7 @@ class Map extends Component {
                       key={typ.id}
                       role={undefined}
                       >
-                      <Accessible style={{color: typ.color }} />
+                      <Room style={{color: typ.color }} />
                     <ListItemText style={{fontSize: 18 }} primary={typ.name}/>
                     </ListItem>  
                     </List>
