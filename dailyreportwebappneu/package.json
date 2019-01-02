@@ -18,6 +18,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
     "react-trello": "^2.0.4",
+    "recompose": "^0.30.0",
     "styled-components": "^4.1.1",
     "typography": "^0.16.17"
   },
