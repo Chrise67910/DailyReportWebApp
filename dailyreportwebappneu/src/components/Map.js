@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps';
 import AlbumIcon from '@material-ui/icons/Album';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -59,25 +59,25 @@ const Types_QUERY = gql`
 
 class Map extends Component {
   constructor(props) {
-    super(props);
+    super(props); 
     this.state={
       types: [],
       isMarkerShown: false
     }
   }
 
-  componentDidMount() {
-    this.delayedShowMarker()
-   }
-   delayedShowMarker = () => {
-    setTimeout(() => {
-     this.setState({ isMarkerShown: true })
-    }, 3000)
-   }
-   handleMarkerClick = () => {
-     this.setState({ isMarkerShown: false })
-     this.delayedShowMarker()
-   }
+  // componentDidMount() {
+  //   this.delayedShowMarker()
+  //  }
+  //  delayedShowMarker = () => {
+  //   setTimeout(() => {
+  //    this.setState({ isMarkerShown: true })
+  //   }, 3000)
+  //  }
+  //  handleMarkerClick = () => {
+  //    this.setState({ isMarkerShown: false })
+  //    this.delayedShowMarker()
+  //  }
 
   // async componentWillMount() {
   //   await client.query({
@@ -116,14 +116,43 @@ class Map extends Component {
   // }
    render() {
 
-  const GoogleMapExample = withGoogleMap((worker, lat, lng) =>
+  const GoogleMapExample = withGoogleMap(() =>
+    
+    <ApolloProvider client = {client}>
+    <div>
     <GoogleMap
       defaultZoom={10}
       defaultCenter={{lat: 47.2634854, lng: 9.862278}}
-    >
-      {worker.isMarkerShown && <Marker  position={{lat: 47.2634854, lng: 9.862278}}
-    />}
-    </GoogleMap>
+    /> 
+    <Query query={Types_QUERY}>
+          {({loading, data, error}) => {
+            console.log(data);
+                  //this.setState({types: data});
+                  if (loading) {
+                    return <p>Loading ...</p>;
+                  }
+                  if (error) { 
+                    return <p>{error.message}</p>;
+                  }
+                  const {allWorkers} = data;
+                  //console.log("alltypes", allTypes);
+                  console.log('data', data);
+                  return (allWorkers.map(worker => (
+                    <Marker 
+                    
+                    position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
+                    label = {worker.workingOn.customer.name}
+                    />
+                 
+                      
+                )));
+                
+            }}
+        
+        </Query>
+    </div>
+      
+    </ApolloProvider>
   )
 
    return(
@@ -136,7 +165,7 @@ class Map extends Component {
           mapElement={ <div style={{ height: `100%` }} /> }
           
         />
-        <Query query={Types_QUERY}>
+        {/* <Query query={Types_QUERY}>
           
           {({loading, data, error}) => {
                 console.log(data);
@@ -151,11 +180,16 @@ class Map extends Component {
                 //console.log("alltypes", allTypes);
                 console.log('data', data);
                 return (allWorkers.map(worker => (
-                    <Marker/>
-
+                    <Marker
+                    
+                    >
+                    
+                    </Marker>
+                    
                )));
+              
           }}
-        </Query>
+        </Query> */}
         <div style={{position: 'absolute', right: 200, top: 250}}>
         <h2 style={{color: "#009999"}}>Statusmeldungen</h2>
           <Query query={Types_QUERY}>
