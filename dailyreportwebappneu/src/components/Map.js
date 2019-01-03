@@ -14,6 +14,7 @@ import RadioButton from '@material-ui/icons/RadioButtonChecked';
 import Album from '@material-ui/icons/Album';
 import Room from '@material-ui/icons/Room';
 import Accessible from '@material-ui/icons/Accessible';
+import SvgIcon from '@material-ui/core/SvgIcon';
 
 import all_Worker from '../queries/allWorker';
 
@@ -123,7 +124,7 @@ class Map extends Component {
     <GoogleMap
       defaultZoom={10}
       defaultCenter={{lat: 47.2634854, lng: 9.862278}}
-    /> 
+    >
     <Query query={Types_QUERY}>
           {({loading, data, error}) => {
             console.log(data);
@@ -138,18 +139,21 @@ class Map extends Component {
                   //console.log("alltypes", allTypes);
                   console.log('data', data);
                   return (allWorkers.map(worker => (
+                                      
                     <Marker 
-                    
-                    position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
-                    label = {worker.workingOn.customer.name}
-                    />
+                      style = {{color: worker.workingOn.typ.color }}
+                      position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
+                    >
+                    </Marker>                   
                  
                       
-                )));
+                  )));
                 
             }}
         
         </Query>
+    </GoogleMap> 
+    
     </div>
       
     </ApolloProvider>

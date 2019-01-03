@@ -17,6 +17,7 @@
     "react-places-autocomplete": "^7.2.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
+    "react-svgicon": "0.0.2",
     "react-trello": "^2.0.4",
     "recompose": "^0.30.0",
     "styled-components": "^4.1.1",
