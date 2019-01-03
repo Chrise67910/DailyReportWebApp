@@ -67,56 +67,9 @@ class Map extends Component {
     }
   }
 
-  // componentDidMount() {
-  //   this.delayedShowMarker()
-  //  }
-  //  delayedShowMarker = () => {
-  //   setTimeout(() => {
-  //    this.setState({ isMarkerShown: true })
-  //   }, 3000)
-  //  }
-  //  handleMarkerClick = () => {
-  //    this.setState({ isMarkerShown: false })
-  //    this.delayedShowMarker()
-  //  }
-
-  // async componentWillMount() {
-  //   await client.query({
-  //     query: Types_Query
-  //   }).then(res => 
-  //     res.data.allTyps.forEach(element => {
-  //       console.log(element);
-  //       this.state.types.push(element);                
-  //     })
-  //   ); 
-  //   console.log(this.state.types)
-
-  //   await client.query({
-  //     query: Types_Query
-  //   }).then(res => 
-  //     res.data.allWorkers.forEach(element => {
-  //       console.log(element);
-  //       this.state.workers.push(element);                
-  //     })
-  //   ); 
-  //   console.log(this.state.workers)
-    
-    //this.setState({tpyes: res.data.allTyps});
-  //}
-  // async componentWillMount() {
-  //   await client.query({
-  //     query: Types_QUERY
-  //   }).then(res => 
-  //     res.data.allTyps.forEach(element => {
-  //       console.log(element);
-  //       this.state.types.push(element);                
-  //     })
-  //   ); 
-  //   console.log(this.state.types)
-  //   //this.setState({tpyes: res.data.allTyps});
-  // }
+  
    render() {
-
+    
   const GoogleMapExample = withGoogleMap(() =>
     
     <ApolloProvider client = {client}>
@@ -140,10 +93,20 @@ class Map extends Component {
                   console.log('data', data);
                   return (allWorkers.map(worker => (
                                       
-                    <Marker 
+                    <Marker
+                      onClick={(e) => { this.setState({ showInfoWindow: true }) }}
+                      //icon={"material-ui/icons/Room.js"}
                       style = {{color: worker.workingOn.typ.color }}
                       position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
                     >
+                      { this.state.showInfoWindow ?
+                        <InfoWindow onCloseclick={(e) => { this.setState({ showInfoWindow: false }) }}>
+                          <div>
+                            {worker.vorname + " " + worker.nachname + " befindet sich bei " + worker.workingOn.customer.name}
+                          </div>
+                        </InfoWindow>
+                        : null
+                      }
                     </Marker>                   
                  
                       
