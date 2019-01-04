@@ -67,7 +67,13 @@ class Map extends Component {
     }
   }
 
-  
+  _toggleShowInfo(event) {
+    if (this.state.showInfoWindow === true) {
+      this.setState({showInfoWindow: false})
+    } else {
+      this.setState({showInfoWindow: true})
+    }
+  } 
    render() {
     
   const GoogleMapExample = withGoogleMap(() =>
@@ -92,11 +98,11 @@ class Map extends Component {
                   //console.log("alltypes", allTypes);
                   console.log('data', data);
                   return (allWorkers.map(worker => (
-                                      
+                    
                     <Marker
-                      onClick={(e) => { this.setState({ showInfoWindow: true }) }}
+                      onClick={(e) => this._toggleShowInfo(e)}
                       //icon={"material-ui/icons/Room.js"}
-                      style = {{color: worker.workingOn.typ.color }}
+                      style = {{color: worker.workingOn.typ.color}}
                       position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
                     >
                       { this.state.showInfoWindow ?
@@ -108,8 +114,6 @@ class Map extends Component {
                         : null
                       }
                     </Marker>                   
-                 
-                      
                   )));
                 
             }}
@@ -175,7 +179,7 @@ class Map extends Component {
                 return (allWorkers.map(worker => (
           /* ---------------- Worker Liste mit Aufgaben -------------------- */
           <List >
-            <div style={{backgroundColor: "#F4F4F4", borderRadius: 17}}>
+            <div style={{backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
               <ListItem>
                 <Room style={{color: worker.workingOn.typ.color }} />
                 <ListItemText style={{fontWeight: "bold"}} primary={worker.vorname + " " + worker.nachname}/>
