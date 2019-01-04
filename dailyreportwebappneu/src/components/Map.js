@@ -68,7 +68,13 @@ class Map extends Component {
     
   }
 
-  
+  _toggleShowInfo(event) {
+    if (this.state.showInfoWindow === true) {
+      this.setState({showInfoWindow: false})
+    } else {
+      this.setState({showInfoWindow: true})
+    }
+  } 
    render() {
     
     
@@ -113,8 +119,6 @@ class Map extends Component {
                         : null
                       }
                     </Marker>                   
-                 
-                      
                   )));
                 
             }}
@@ -180,7 +184,7 @@ class Map extends Component {
                 return (allWorkers.map(worker => (
           /* ---------------- Worker Liste mit Aufgaben -------------------- */
           <List >
-            <div style={{backgroundColor: "#F4F4F4", borderRadius: 17}}>
+            <div style={{backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
               <ListItem>
                 <Room style={{color: worker.workingOn.typ.color }} />
                 <ListItemText style={{fontWeight: "bold"}} primary={worker.vorname + " " + worker.nachname}/>
