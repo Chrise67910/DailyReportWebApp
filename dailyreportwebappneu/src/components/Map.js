@@ -65,10 +65,12 @@ class Map extends Component {
       types: [],
       isMarkerShown: false
     }
+    
   }
 
   
    render() {
+    
     
   const GoogleMapExample = withGoogleMap(() =>
     
@@ -91,12 +93,15 @@ class Map extends Component {
                   const {allWorkers} = data;
                   //console.log("alltypes", allTypes);
                   console.log('data', data);
+                  
                   return (allWorkers.map(worker => (
-                                      
+                                                 
                     <Marker
                       onClick={(e) => { this.setState({ showInfoWindow: true }) }}
-                      //icon={"material-ui/icons/Room.js"}
-                      style = {{color: worker.workingOn.typ.color }}
+                      icon={{url: 'data:image/svg+xml;utf-8, \
+                      <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"> \
+                        <path fill="'+ worker.workingOn.typ.color + '" d="M7,0C3.13,0,0,3.13,0,7c0,5.25,7,13,7,13s7-7.75,7-13C14,3.13,10.87,0,7,0z M7,9.5C5.62,9.5,4.5,8.38,4.5,7S5.62,4.5,7,4.5 S9.5,5.62,9.5,7S8.38,9.5,7,9.5z" ></path> \
+                      </svg>'}}
                       position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
                     >
                       { this.state.showInfoWindow ?
