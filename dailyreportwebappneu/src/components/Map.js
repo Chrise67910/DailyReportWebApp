@@ -83,7 +83,7 @@ class Map extends Component {
     <ApolloProvider client = {client}>
     <div>
     <GoogleMap
-      defaultZoom={10}
+      defaultZoom={9.8}
       defaultCenter={{lat: 47.2634854, lng: 9.862278}}
     >
     <Query query={Types_QUERY}>
@@ -141,7 +141,7 @@ class Map extends Component {
         <GoogleMapExample
           isMarkerShown
           position
-          containerElement={ <div style={{ height: 688, width: 823, borderRightColor: '#EAEAEA', borderRightWidth: 3, paddingRight: 63, borderRightStyle: 'solid' }} /> }
+          containerElement={ <div style={{ height: 510, width: 723, borderRightColor: '#EAEAEA', borderRightWidth: 3, paddingRight: 63, borderRightStyle: 'solid' }} /> }
           mapElement={ <div style={{ height: `100%` }} /> }
           
         />
@@ -170,8 +170,9 @@ class Map extends Component {
               
           }}
         </Query> */}
-        <div style={{position: 'absolute', right: 200, top: 250}}>
+        <div style={{position: 'absolute', right: 200, top: 220}}>
         <h2 style={{color: "#009999"}}>Statusmeldungen</h2>
+        <div style={{overflowY: 'auto', height: "450px", right: 200, top: 250}}>
           <Query query={Types_QUERY}>
           {({loading, data, error}) => {
                 console.log(data);
@@ -188,7 +189,7 @@ class Map extends Component {
                 return (allWorkers.map(worker => (
           /* ---------------- Worker Liste mit Aufgaben -------------------- */
           <List >
-            <div style={{backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
+            <div style={{cursor:'pointer', backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
               <ListItem>
                 <Room style={{color: worker.workingOn.typ.color }} />
                 <ListItemText style={{fontWeight: "bold"}} primary={worker.vorname + " " + worker.nachname}/>
@@ -211,6 +212,7 @@ class Map extends Component {
           )))
           } }
           </Query>
+        </div>
         </div>
         <div style={{display: 'flex', paddingTop: 15, paddingBottom: 30}}>
         <Query query={Types_QUERY}>
