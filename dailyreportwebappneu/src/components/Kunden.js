@@ -391,7 +391,7 @@ export class Kunden extends Component {
                       key={customer.id}
                       role={undefined}
                       dense
-                      className={Kunden.ListItem}
+                      className="KundenListItem"
                       >
                       {/* <Checkbox
                         onClick={this.handleToggle(customer)}
