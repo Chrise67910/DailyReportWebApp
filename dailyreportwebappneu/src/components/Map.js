@@ -17,6 +17,7 @@ import Accessible from '@material-ui/icons/Accessible';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
 import all_Worker from '../queries/allWorker';
+import { TextField, InputLabel, Input } from '@material-ui/core';
 
 const client = new ApolloClient({
   uri: "https://api.graph.cool/simple/v1/cjna4ydca59580129beayc2nw"
@@ -147,7 +148,7 @@ class Map extends Component {
         <GoogleMapExample
           isMarkerShown
           position
-          containerElement={ <div style={{ height: 510, width: 723, paddingRight: 63 }} /> }
+          containerElement={ <div style={{ height: 510, width: 1040, paddingRight: 63 }} /> }
           mapElement={ <div style={{ height: `100%` }} /> }
           
         />
@@ -176,9 +177,9 @@ class Map extends Component {
               
           }}
         </Query> */}
-        <div style={{position: 'absolute', right: 200, top: 190}}>
+        <div style={{position: 'absolute', right: 100, top: 190}}>
         <h2 style={{color: "#009999"}}>Statusmeldungen</h2>
-        <div style={{overflowY: 'auto', height: "450px", right: 200, top: 250}}>
+        <div style={{overflowY: 'auto', height: 350, right: 105, top: 250}}>
           <Query query={Types_QUERY}>
           {({loading, data, error}) => {
                 console.log(data);
@@ -197,23 +198,29 @@ class Map extends Component {
           
           <List >
             {worker.workingOn != null ?
-            <div style={{cursor:'pointer', backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
+            <div style={{cursor:'pointer', marginRight: 20, backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
               <ListItem>
-                <Room style={{color: worker.workingOn.typ.color }} />
-                <ListItemText style={{fontWeight: "bold"}} primary={worker.vorname + " " + worker.nachname}/>
+                <Room style={{color: worker.workingOn.typ.color}}/>
+                  <ListItemText style={{fontWeight: "bold"}}>
+                    {worker.vorname + " " + worker.nachname}
+                  </ListItemText>
               </ListItem>
-              <ListItem>
-                <ListItemText primary={worker.workingOn.customer.name}/>
-              </ListItem>
-              <ListItem>
-                <ListItemText secondary={worker.workingOn.customer.street + ", " + worker.workingOn.customer.plz + " " +worker.workingOn.customer.city}/>
-              </ListItem>
-              <ListItem>
-                <ListItemText primary={worker.workingOn.title}/>
-                </ListItem>
-              <ListItem>
-                <ListItemText secondary={worker.workingOn.from + "-" + worker.workingOn.to}/>
-              </ListItem>
+              <div style={{paddingLeft: 25, paddingBottom: 10, paddingRight: 25}}>
+              <div style={{fontWeight: "bold"}}>
+                  {worker.workingOn.customer.name}
+                </div>
+
+                <div style={{paddingBottom: 10, fontSize: 13}}>
+                  {worker.workingOn.customer.street + ", " + worker.workingOn.customer.plz + " " +worker.workingOn.customer.city}
+                </div>
+
+                <div style={{fontWeight: "bold"}}>
+                  {worker.workingOn.title}
+                </div>
+                <div style={{fontSize: 13}}>
+                  {worker.workingOn.from + "-" + worker.workingOn.to}
+                </div>
+              </div>
             </div>
             : null}
           </List>
@@ -223,7 +230,7 @@ class Map extends Component {
           </Query>
         </div>
         </div>
-        <div style={{display: 'flex',flexDirection: "column", paddingTop: 15, paddingBottom: 30, position: "absolute",right: 600, top: 190}}>
+        <div style={{display: 'flex', flexDirection: "row", flexWrap: "wrap",paddingTop: 15, paddingBottom: 30, position: "absolute", right: 105, bottom: 25, width: 293.01}}>
         <Query query={Types_QUERY}>
               {({loading, data, error}) => {
                 console.log(data);
@@ -241,15 +248,17 @@ class Map extends Component {
                     <List 
                     //style={{position: 'absolute', display: "flexbox", flex: 1, flexDirection: "column", height: 300 ,right: 600, top: 190}}
                     >
-                    <ListItem
-                    style={{position: "relative", height: 20}}
+                    <div
+                    style={{position: "relative", height: 20, width: 90}}
                       //style={{borderColor: '#E3E3E3', borderWidth: 2, borderStyle: 'solid'}}
                       key={typ.id}
                       role={undefined}
                       >
+                      
+                      <div style={{fontSize: 14 }}>
                       <Room style={{color: typ.color }} />
-                    <ListItemText style={{fontSize: 18 }} primary={typ.name}/>
-                    </ListItem>  
+                      {typ.name}</div>
+                    </div>  
                     </List>
                 )));                
                 } }
