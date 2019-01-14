@@ -30,6 +30,7 @@ const Types_QUERY = gql`
         color
       }
 
+
       allWorkers {
         id
         vorname
@@ -101,8 +102,10 @@ class Map extends Component {
                   console.log('data', data);
                   
                   return (allWorkers.map(worker => (
-                                                 
+                  <div>
+                    {worker.workingOn != null ?
                     <Marker
+                      
                       onClick={(e) => { this.setState({ showInfoWindow: true }) }}
                       icon={{url: 'data:image/svg+xml;utf-8, \
                       <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> \
@@ -122,7 +125,10 @@ class Map extends Component {
                         </InfoWindow>
                         : null
                       }
-                    </Marker>                   
+                    </Marker>
+                    : null}
+                  </div>        
+                                       
                   )));
                 
             }}
@@ -141,7 +147,7 @@ class Map extends Component {
         <GoogleMapExample
           isMarkerShown
           position
-          containerElement={ <div style={{ height: 510, width: 723, borderRightColor: '#EAEAEA', borderRightWidth: 3, paddingRight: 63, borderRightStyle: 'solid' }} /> }
+          containerElement={ <div style={{ height: 510, width: 723, paddingRight: 63 }} /> }
           mapElement={ <div style={{ height: `100%` }} /> }
           
         />
@@ -170,7 +176,7 @@ class Map extends Component {
               
           }}
         </Query> */}
-        <div style={{position: 'absolute', right: 200, top: 220}}>
+        <div style={{position: 'absolute', right: 200, top: 190}}>
         <h2 style={{color: "#009999"}}>Statusmeldungen</h2>
         <div style={{overflowY: 'auto', height: "450px", right: 200, top: 250}}>
           <Query query={Types_QUERY}>
@@ -188,7 +194,9 @@ class Map extends Component {
                 console.log('data', data);
                 return (allWorkers.map(worker => (
           /* ---------------- Worker Liste mit Aufgaben -------------------- */
+          
           <List >
+            {worker.workingOn != null ?
             <div style={{cursor:'pointer', backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
               <ListItem>
                 <Room style={{color: worker.workingOn.typ.color }} />
@@ -207,6 +215,7 @@ class Map extends Component {
                 <ListItemText secondary={worker.workingOn.from + "-" + worker.workingOn.to}/>
               </ListItem>
             </div>
+            : null}
           </List>
           
           )))
@@ -214,7 +223,7 @@ class Map extends Component {
           </Query>
         </div>
         </div>
-        <div style={{display: 'flex', paddingTop: 15, paddingBottom: 30}}>
+        <div style={{display: 'flex',flexDirection: "column", paddingTop: 15, paddingBottom: 30, position: "absolute",right: 600, top: 190}}>
         <Query query={Types_QUERY}>
               {({loading, data, error}) => {
                 console.log(data);
@@ -229,8 +238,11 @@ class Map extends Component {
                 //console.log("alltypes", allTypes);
                 console.log('data', data);
                 return (allTyps.map(typ => (
-                    <List>
+                    <List 
+                    //style={{position: 'absolute', display: "flexbox", flex: 1, flexDirection: "column", height: 300 ,right: 600, top: 190}}
+                    >
                     <ListItem
+                    style={{position: "relative", height: 20}}
                       //style={{borderColor: '#E3E3E3', borderWidth: 2, borderStyle: 'solid'}}
                       key={typ.id}
                       role={undefined}
