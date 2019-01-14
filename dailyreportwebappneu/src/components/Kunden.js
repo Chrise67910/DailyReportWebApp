@@ -399,8 +399,8 @@ export class Kunden extends Component {
                         tabIndex={-1}
                         disableRipple
                       /> */}
-                    <ListItemText style={{fontSize: 18, width: 400 }} primary={customer.name}/>
-                    <ListItemText style={{fontSize: 15, textAlign: 'left', flex: 1, flexBasis: '75%'}} secondary={customer.street + ", " + customer.plz + " " + customer.city}/>
+                    <ListItemText style={{cursor: 'default', fontSize: 18, width: 400 }} primary={customer.name}/>
+                    <ListItemText style={{cursor: 'default', fontSize: 15, textAlign: 'left', flex: 1, flexBasis: '75%'}} secondary={customer.street + ", " + customer.plz + " " + customer.city}/>
                     {/* <ListItemText style={{fontSize: 15 }} secondary={customer.lat + "/" + customer.lng}/> */}
                         <ListItemSecondaryAction>
                         <IconButton aria-label="Comments" onClick={(e) => this._showFormEdit(e, customer)}>  
