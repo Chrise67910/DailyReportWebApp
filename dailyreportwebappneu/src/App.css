@@ -48,6 +48,13 @@
   text-decoration: none;
   color: #909090;
 }
+.box_nav:hover {
+  background-color: rgb(211, 211, 211);
+}
+.KundenListItem:hover {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
 .navigation {
   display: -webkit-box;
   display: -webkit-flex;
