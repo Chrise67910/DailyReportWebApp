@@ -221,8 +221,6 @@ class NewCard extends Component {
                     }}
                   </Query>
                 </select>
-                {/* TODO: Kunden select box */}
-                {/* <input type="text" onChange={evt => this.updateField('prio', evt)} placeholder="Prio" /> */}
               </div>
             </div>
             <button onClick={this.handleAdd} style={{ backgroundColor: '#099', color: 'white', borderRadius: '5px', marginRight: '10px', padding: '10px', marginTop: '10px' }}>Hinzufügen</button>
