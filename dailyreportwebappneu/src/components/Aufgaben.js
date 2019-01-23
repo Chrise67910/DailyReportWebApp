@@ -181,9 +181,9 @@ class NewCard extends Component {
             </div>
             <div style={{ marginBottom: 5 }}>
               <select onChange={evt => this.updateField('prio', evt)} style={{ borderRadius: '5px', border: 'none', padding: '10px', backgroundColor: 'rgb(244, 244, 244)', color: 'black', width: '100%' }}>
-                <option value="3">Hohe Priorität (Störung)</option>
-                <option value="2">Mittlere Priorität</option>
-                <option value="1">Niedrige Priorität</option>
+                <option value="2">Hohe Priorität (Störung)</option>
+                <option value="1">Mittlere Priorität</option>
+                <option value="0">Niedrige Priorität</option>
               </select>
               {/* TODO: Kunden select box */}
               {/* <input type="text" onChange={evt => this.updateField('prio', evt)} placeholder="Prio" /> */}
