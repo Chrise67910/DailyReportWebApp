@@ -17,7 +17,20 @@ const client = new ApolloClient({
 // const CustomBoard = styled(Board)`
 //   .Section { border-radius: 10px }
 // `;
+const Customers_QUERY = gql`
+    {
+      allCustomers {
+        id
+        name
+        city
+        plz
+        street
+        lat
+        lng
+      }
 
+    }
+  `;
 class Aufgaben extends Component {
   state = { boardData: { lanes: [] } }
 
@@ -85,15 +98,19 @@ class Aufgaben extends Component {
     });
   }
   createCard(card, laneId) {
+    console.log(card.customer);
     client.mutate({
-      variables: { title: card.title, priority: parseInt(card.prio), laneId: laneId },
+      variables: { title: card.title, priority: parseInt(card.prio), laneId: laneId, customer: card.customer },
       mutation: gql`
-            mutation createTrelloCard($title: String!, $priority: Int!, $laneId: String!){
-                createTrelloCard(title: $title, priority: $priority, laneId: $laneId) {
+            mutation createTrelloCard($title: String!, $priority: Int!, $laneId: String!, $customerId: ID!){
+                createTrelloCard(title: $title, priority: $priority, laneId: $laneId, customerId: $customerId) {
                     id
                     title
                     priority
                     laneId
+                    customer {
+                      id
+                    }
                 }
             }
         `,
@@ -173,26 +190,46 @@ class NewCard extends Component {
   render() {
     const { onCancel } = this.props
     return (
-      <div style={{ background: 'white', borderRadius: 3, border: '1px solid #eee', borderRadius: '10px' }}>
-        <div style={{ padding: 5, margin: 5 }}>
-          <div>
-            <div style={{ marginBottom: 5 }}>
-              <input type="text" onChange={evt => this.updateField('title', evt)} style={{ borderRadius: '5px', border: 'none', padding: '10px', backgroundColor: 'rgb(244, 244, 244)', color: 'black', width: '100%', marginBottom: '7px' }} placeholder="Aufgabe" />
+      <ApolloProvider client={client}>
+        <div style={{ background: 'white', borderRadius: 3, border: '1px solid #eee', borderRadius: '10px' }}>
+          <div style={{ padding: 5, margin: 5 }}>
+            <div>
+              <div style={{ marginBottom: 5 }}>
+                <input type="text" onChange={evt => this.updateField('title', evt)} style={{ borderRadius: '5px', border: 'none', padding: '10px', backgroundColor: 'rgb(244, 244, 244)', color: 'black', width: '100%', marginBottom: '7px' }} placeholder="Aufgabe" />
+              </div>
+              <div style={{ marginBottom: 5 }}>
+                <select defaultValue="priori" onChange={evt => this.updateField('prio', evt)} style={{ borderRadius: '5px', border: 'none', padding: '10px', backgroundColor: 'rgb(244, 244, 244)', color: 'black', width: '100%', marginBottom: '10px' }}>
+                  <option disabled value="priori">Priorität wählen</option>
+                  <option value="2">Hohe Priorität (Störung)</option>
+                  <option value="1">Mittlere Priorität</option>
+                  <option value="0">Niedrige Priorität</option>
+                </select>
+                <select defaultValue="kunde" onChange={evt => this.updateField('customer', evt)} style={{ borderRadius: '5px', border: 'none', padding: '10px', backgroundColor: 'rgb(244, 244, 244)', color: 'black', width: '100%' }}>
+                  <option disabled value="kunde">Kunde auswählen</option>
+                  <Query query={Customers_QUERY}>
+                    {({ loading, data, error }) => {
+                      if (loading) {
+                        return "Loading";
+                      }
+                      if (error) {
+                        return "{error.message}";
+                      }
+                      const { allCustomers } = data;
+                      return (allCustomers.map(customer => (
+                        <option key={customer.id} value={customer.id}>{customer.name}</option>
+                      )));
+                    }}
+                  </Query>
+                </select>
+                {/* TODO: Kunden select box */}
+                {/* <input type="text" onChange={evt => this.updateField('prio', evt)} placeholder="Prio" /> */}
+              </div>
             </div>
-            <div style={{ marginBottom: 5 }}>
-              <select onChange={evt => this.updateField('prio', evt)} style={{ borderRadius: '5px', border: 'none', padding: '10px', backgroundColor: 'rgb(244, 244, 244)', color: 'black', width: '100%' }}>
-                <option value="3">Hohe Priorität (Störung)</option>
-                <option value="2">Mittlere Priorität</option>
-                <option value="1">Niedrige Priorität</option>
-              </select>
-              {/* TODO: Kunden select box */}
-              {/* <input type="text" onChange={evt => this.updateField('prio', evt)} placeholder="Prio" /> */}
-            </div>
+            <button onClick={this.handleAdd} style={{ backgroundColor: '#099', color: 'white', borderRadius: '5px', marginRight: '10px', padding: '10px', marginTop: '10px' }}>Hinzufügen</button>
+            <button onClick={onCancel} style={{ backgroundColor: 'rgb(244, 244, 244)', color: 'black', borderRadius: '5px', marginRight: '10px', padding: '10px' }}> Abbrechen</button>
           </div>
-          <button onClick={this.handleAdd} style={{ backgroundColor: '#099', color: 'white', borderRadius: '5px', marginRight: '10px', padding: '10px', marginTop: '10px' }}>Hinzufügen</button>
-          <button onClick={onCancel} style={{ backgroundColor: 'rgb(244, 244, 244)', color: 'black', borderRadius: '5px', marginRight: '10px', padding: '10px' }}> Abbrechen</button>
-        </div>
-      </div>
+        </div >
+      </ApolloProvider>
     )
   }
 }
