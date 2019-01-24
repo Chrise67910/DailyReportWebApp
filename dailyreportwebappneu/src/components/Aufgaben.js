@@ -100,7 +100,7 @@ class Aufgaben extends Component {
   createCard(card, laneId) {
     console.log(card.customer);
     client.mutate({
-      variables: { title: card.title, priority: parseInt(card.prio), laneId: laneId, customer: card.customer },
+      variables: { title: card.title, priority: parseInt(card.prio), laneId: laneId, customerId: card.customer },
       mutation: gql`
             mutation createTrelloCard($title: String!, $priority: Int!, $laneId: String!, $customerId: ID!){
                 createTrelloCard(title: $title, priority: $priority, laneId: $laneId, customerId: $customerId) {
@@ -108,9 +108,6 @@ class Aufgaben extends Component {
                     title
                     priority
                     laneId
-                    customer {
-                      id
-                    }
                 }
             }
         `,
@@ -191,7 +188,7 @@ class NewCard extends Component {
     const { onCancel } = this.props
     return (
       <ApolloProvider client={client}>
-        <div style={{ background: 'white', borderRadius: 3, border: '1px solid #eee', borderRadius: '10px' }}>
+        <div style={{ background: 'white', borderRadius: 3, border: '1px solid #eee', borderRadius: '10px', width: '250px' }}>
           <div style={{ padding: 5, margin: 5 }}>
             <div>
               <div style={{ marginBottom: 5 }}>
@@ -223,8 +220,8 @@ class NewCard extends Component {
                 </select>
               </div>
             </div>
-            <button onClick={this.handleAdd} style={{ backgroundColor: '#099', color: 'white', borderRadius: '5px', marginRight: '10px', padding: '10px', marginTop: '10px' }}>Hinzufügen</button>
-            <button onClick={onCancel} style={{ backgroundColor: 'rgb(244, 244, 244)', color: 'black', borderRadius: '5px', marginRight: '10px', padding: '10px' }}> Abbrechen</button>
+            <button onClick={this.handleAdd} style={{ cursor: 'pointer', backgroundColor: '#099', color: 'white', borderRadius: '5px', marginRight: '10px', padding: '10px', marginTop: '10px' }}>Hinzufügen</button>
+            <button onClick={onCancel} style={{ cursor: 'pointer', backgroundColor: 'rgb(244, 244, 244)', color: 'black', borderRadius: '5px', marginRight: '10px', padding: '10px' }}> Abbrechen</button>
           </div>
         </div >
       </ApolloProvider>
