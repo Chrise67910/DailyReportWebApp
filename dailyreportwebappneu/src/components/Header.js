@@ -31,7 +31,9 @@ const Header = () => (
               <label>Mitarbeiter</label>
             </div >
           </NavLink >
-          <img style={{height: 100, width: 'auto', position: 'absolute', right: 100}} src={require('./siemens_logo.png')} />
+          <NavLink to="/">
+            <img style={{height: 100, width: 'auto', position: 'absolute', right: 100}} src={require('./siemens_logo.png')} />
+          </NavLink>
     </header> 
 )
 export default Header;
