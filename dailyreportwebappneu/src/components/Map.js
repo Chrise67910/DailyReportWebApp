@@ -219,19 +219,19 @@ class Map extends Component {
                       </ListItemText>
                   </ListItem>
                 </div>
-                <div style={{paddingBottom: 10, paddingRight: 25}}>
-                  <div style={{fontWeight: "bold"}}>
+                <div style={{paddingBottom: 10}}>
+                  <div style={{fontWeight: "bold", paddingLeft: 20}}>
                     {worker.workingOn.customer.name}
                   </div>
 
-                  <div style={{paddingBottom: 10, fontSize: 13}}>
+                  <div style={{paddingBottom: 10, fontSize: 13, paddingLeft: 20}}>
                     {worker.workingOn.customer.street + ", " + worker.workingOn.customer.plz + " " + worker.workingOn.customer.city}
                   </div>
 
-                  <div style={{fontWeight: "bold"}}>
+                  <div style={{fontWeight: "bold", paddingLeft: 20}}>
                     {worker.workingOn.title}
                   </div>
-                  <div style={{fontSize: 13}}>
+                  <div style={{fontSize: 13, paddingLeft: 20}}>
                     {worker.workingOn.from + "-" + worker.workingOn.to}
                   </div>
                 </div>
