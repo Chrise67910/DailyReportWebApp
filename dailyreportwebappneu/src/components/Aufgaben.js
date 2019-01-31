@@ -129,6 +129,12 @@ class Aufgaben extends Component {
       // this.setState({boardData: dataStat})
       // console.log(data.data.createTrelloCard.id);
       //card.id = data.data.createTrelloCard.id;
+      fetch('http://188.166.76.7:7070/sendPushTask?token=ExponentPushToken[YLFeUEJMBZGJ6d1moN1Fk4]', {
+        mode: 'no-cors'
+      }).then(() => {
+      }).catch(error => {
+        console.log(error);
+      });
       window.location.reload();
     }).catch(error => {
       console.log(error);
