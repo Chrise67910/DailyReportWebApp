@@ -384,6 +384,7 @@ export class Mitarbeiter extends Component {
               </form>
             ): (<div></div>)}    
           </div>
+          <div style={{overflowY: 'scroll', height: 400}}>
             <Query query={Mitarbeiter_QUERY}>
               {({loading, data, error}) => {
                   console.log(data);
@@ -425,8 +426,8 @@ export class Mitarbeiter extends Component {
                     </List>
                 )));                
                 } }
-                
-            </Query>
+              </Query>
+            </div>
             {/* <IconButton aria-label="Comments" onClick={(e) => this.addCustomer(e)}>
               ADD
             </IconButton>

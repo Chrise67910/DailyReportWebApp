@@ -6,6 +6,11 @@ const all_Trello = gql`
       id
       laneId
       title
+      priority
+      customer {
+        id
+        name
+      }
     }
   }
 `;

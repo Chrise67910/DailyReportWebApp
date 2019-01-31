@@ -116,6 +116,7 @@ export class Kunden extends Component {
           `,
       }).then((data) => {
           window.location.reload();
+          //this._refreshList();
       }).catch(error => {
           console.log(error);
       })
@@ -375,6 +376,7 @@ export class Kunden extends Component {
               </form>
             ): (<div></div>)}    
           </div>
+          <div style={{overflowY: 'scroll', height: 400}}>
             <Query query={Customers_QUERY}>
               {({loading, data, error}) => {
                 if (loading) {
@@ -385,7 +387,7 @@ export class Kunden extends Component {
                 }
                 const {allCustomers} = data;
                 return (allCustomers.map(customer => (
-                    <List>
+                  <List>
                     <ListItem
                       style={{borderColor: '#E3E3E3', borderBottomWidth: 2, borderBottomStyle: 'solid'}}
                       key={customer.id}
@@ -412,11 +414,12 @@ export class Kunden extends Component {
                         </IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>  
-                    </List>
+                  </List>
+                  
                 )));                
                 } }
-                
-            </Query>
+              </Query>
+            </div> 
             {/* <IconButton aria-label="Comments" onClick={(e) => this.addCustomer(e)}>
               ADD
             </IconButton>
