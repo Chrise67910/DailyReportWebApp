@@ -1,6 +1,10 @@
 .App {
   text-align: center;
 }
+::selection {
+  background-color: rgb(0, 153, 153);
+  color: white;
+}
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
