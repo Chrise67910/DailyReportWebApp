@@ -107,7 +107,7 @@ class Map extends Component {
                     {worker.workingOn != null ?
                     <Marker
                       
-                      onClick={(e) => { this.setState({ showInfoWindow: true }) }}
+                      // onClick={(e) => { this.setState({ showInfoWindow: true }) }}
                       icon={{url: 'data:image/svg+xml;utf-8, \
                       <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> \
                         <path fill="'+ worker.workingOn.typ.color + '" d="M7,0C3.13,0,0,3.13,0,7c0,5.25,7,13,7,13s7-7.75,7-13C14,3.13,10.87,0,7,0z M7,9.5C5.62,9.5,4.5,8.38,4.5,7S5.62,4.5,7,4.5 S9.5,5.62,9.5,7S8.38,9.5,7,9.5z" ></path> \
@@ -118,14 +118,14 @@ class Map extends Component {
                       
                       position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
                     >
-                      { this.state.showInfoWindow ?
+                      {/* { this.state.showInfoWindow ?
                         <InfoWindow onCloseclick={(e) => { this.setState({ showInfoWindow: false }) }}>
                           <div>
                             {worker.vorname + " " + worker.nachname + " befindet sich bei " + worker.workingOn.customer.name}
                           </div>
                         </InfoWindow>
                         : null
-                      }
+                      } */}
                     </Marker>
                     : null}
                   </div>        
@@ -177,9 +177,9 @@ class Map extends Component {
               
           }}
         </Query> */}
-        <div style={{position: 'absolute', right: 100, top: 190}}>
+        <div style={{position: 'absolute', right: 125, top: 190}}>
         <h2 style={{color: "#009999"}}>Statusmeldungen</h2>
-        <div style={{overflowY: 'auto', height: 350, right: 105, top: 250}}>
+        <div style={{overflowY: 'scroll', height: 350, right: 105, top: 250}}>
           <Query query={Types_QUERY}>
           {({loading, data, error}) => {
                 console.log(data);
@@ -198,29 +198,47 @@ class Map extends Component {
           
           <List >
             {worker.workingOn != null ?
-            <div style={{cursor:'pointer', marginRight: 20, backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
-              <ListItem>
-                <Room style={{color: worker.workingOn.typ.color}}/>
-                  <ListItemText style={{fontWeight: "bold"}}>
-                    {worker.vorname + " " + worker.nachname}
-                  </ListItemText>
-              </ListItem>
-              <div style={{paddingLeft: 25, paddingBottom: 10, paddingRight: 25}}>
-              <div style={{fontWeight: "bold"}}>
-                  {worker.workingOn.customer.name}
+            <div>
+              {this.state.showInfoWindow != true ?
+            
+                <div style={{cursor:'pointer', marginRight: 20, backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
+                  <ListItem>
+                    <Room style={{color: worker.workingOn.typ.color}}/>
+                      <ListItemText style={{fontWeight: "bold"}}>
+                        {worker.vorname + " " + worker.nachname}
+                      </ListItemText>
+                  </ListItem>
                 </div>
 
-                <div style={{paddingBottom: 10, fontSize: 13}}>
-                  {worker.workingOn.customer.street + ", " + worker.workingOn.customer.plz + " " +worker.workingOn.customer.city}
+                :
+                <div style={{cursor:'pointer', marginRight: 20, backgroundColor: "#F4F4F4", borderRadius: 17}}  onClick={(e) => this._toggleShowInfo(e)}>
+                <div>
+                  <ListItem>
+                    <Room style={{color: worker.workingOn.typ.color}}/>
+                      <ListItemText style={{fontWeight: "bold"}}>
+                        {worker.vorname + " " + worker.nachname}
+                      </ListItemText>
+                  </ListItem>
                 </div>
+                <div style={{paddingBottom: 10}}>
+                  <div style={{fontWeight: "bold", paddingLeft: 20}}>
+                    {worker.workingOn.customer.name}
+                  </div>
 
-                <div style={{fontWeight: "bold"}}>
-                  {worker.workingOn.title}
+                  <div style={{paddingBottom: 10, fontSize: 13, paddingLeft: 20}}>
+                    {worker.workingOn.customer.street + ", " + worker.workingOn.customer.plz + " " + worker.workingOn.customer.city}
+                  </div>
+
+                  <div style={{fontWeight: "bold", paddingLeft: 20}}>
+                    {worker.workingOn.title}
+                  </div>
+                  <div style={{fontSize: 13, paddingLeft: 20}}>
+                    {worker.workingOn.from + "-" + worker.workingOn.to}
+                  </div>
                 </div>
-                <div style={{fontSize: 13}}>
-                  {worker.workingOn.from + "-" + worker.workingOn.to}
                 </div>
-              </div>
+                 }
+
             </div>
             : null}
           </List>

@@ -67,9 +67,10 @@ class Aufgaben extends Component {
     }).then(res =>
       res.data.allTrelloCards.forEach(element => {
         console.log(element);
+        console.log('customer', element.customer.name);
         jsnRes.lanes.forEach(lane => {
           if (element.laneId === lane.id) {
-            var card = { 'id': element.id, 'title': element.title, 'laneId': element.laneId, 'style': { borderRadius: 7, borderBottom: 'none' } };
+            var card = { 'id': element.id, 'title': element.title, 'laneId': element.laneId, 'customer': element.customer.name, 'priority': element.priority, 'style': { borderRadius: 7, borderBottom: 'none' } };
             lane.cards.push(card)
           }
         });
@@ -129,6 +130,12 @@ class Aufgaben extends Component {
       // this.setState({boardData: dataStat})
       // console.log(data.data.createTrelloCard.id);
       //card.id = data.data.createTrelloCard.id;
+      fetch('http://188.166.76.7:7070/sendPushTask?token=ExponentPushToken[YLFeUEJMBZGJ6d1moN1Fk4]', {
+        mode: 'no-cors'
+      }).then(() => {
+      }).catch(error => {
+        console.log(error);
+      });
       window.location.reload();
     }).catch(error => {
       console.log(error);
@@ -157,23 +164,88 @@ class Aufgaben extends Component {
 }
 
 const CustomCard = props => {
-  return (
-    <div style={{ borderRadius: 10 }}>
-      <header
-        style={{
-          marginLeft: 5,
-          paddingTop: 5,
-          paddingBottom: 6,
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          color: props.cardColor,
-        }}>
-        <div style={{ fontSize: 14, fontWeight: 'bold' }}>{props.title}</div>
-        <div style={{ fontSize: 11 }}>{props.dueOn}</div>
-      </header>
-    </div>
-  )
+  switch (props.priority) {
+    case 0:
+      return (
+        <div style={{ borderRadius: 10 }}>
+          <header
+            style={{
+              marginLeft: 5,
+              paddingTop: 5,
+              paddingBottom: 6,
+              // display: 'flex',
+              // flexDirection: 'row',
+              // justifyContent: 'space-between',
+              color: props.cardColor,
+            }}>
+            <div style={{ fontSize: 14, fontWeight: 'bold' }}>{props.title}</div>
+            <div style={{ fontSize: 13 }}>{props.customer}</div>
+            <div style={{ fontSize: 11, fontWeight: 'light' }}>Niedrige Priorität</div>
+          </header>
+        </div>
+      );
+      break;
+    case 1:
+    return (
+      <div style={{ borderRadius: 10 }}>
+        <header
+          style={{
+            marginLeft: 5,
+            paddingTop: 5,
+            paddingBottom: 6,
+            // display: 'flex',
+            // flexDirection: 'row',
+            // justifyContent: 'space-between',
+            color: props.cardColor,
+          }}>
+          <div style={{ fontSize: 14, fontWeight: 'bold' }}>{props.title}</div>
+          <div style={{ fontSize: 13 }}>{props.customer}</div>
+          <div style={{ fontSize: 11, fontWeight: 'light' }}>Mittlere Priorität</div>
+        </header>
+      </div>
+    );
+      break;
+    case 2:
+    return (
+      <div style={{ borderRadius: 10 }}>
+        <header
+          style={{
+            marginLeft: 5,
+            paddingTop: 5,
+            paddingBottom: 6,
+            //display: 'flex',
+            //flexDirection: 'column',
+            //justifyContent: 'space-between',
+            color: props.cardColor,
+          }}>
+          <div style={{ fontSize: 14, fontWeight: 'bold' }}>{props.title}</div>
+          <div style={{ fontSize: 13}}>{props.customer}</div>
+          <div style={{ fontSize: 11, fontWeight: 'light' }}>Hohe Priorität (Störung)</div>
+        </header>
+      </div>
+    );
+      break;
+    default:
+      break;
+  }
+  // return (
+  //   <div style={{ borderRadius: 10 }}>
+  //     <header
+  //       style={{
+  //         marginLeft: 5,
+  //         paddingTop: 5,
+  //         paddingBottom: 6,
+  //         display: 'flex',
+  //         flexDirection: 'row',
+  //         justifyContent: 'space-between',
+  //         color: props.cardColor,
+  //       }}>
+  //       <div style={{ fontSize: 14, fontWeight: 'bold' }}>{props.title}</div>
+  //       <div style={{ fontSize: 14, fontWeight: 'bold' }}>{props.customer.name}</div>
+  //       <div style={{ fontSize: 11, fontWeight: 'bold' }}>{props.priority}</div>
+  //     </header>
+  //   </div>
+  // )
 }
 class NewCard extends Component {
   updateField = (field, evt) => {
