@@ -90,3 +90,14 @@
   to { transform: rotate(360deg); }
 }
 
+.box.green {
+  /* background-color: blue;  */
+  height: 146px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.box {
+  height: 40px;
+  position: relative;
+}
+
