@@ -130,7 +130,7 @@ class Aufgaben extends Component {
       // this.setState({boardData: dataStat})
       // console.log(data.data.createTrelloCard.id);
       //card.id = data.data.createTrelloCard.id;
-      fetch('http://188.166.76.7:7070/sendPushTask?token=ExponentPushToken[YLFeUEJMBZGJ6d1moN1Fk4]', {
+      fetch('http://dailyreport.ga:7070/sendPushTask?token=ExponentPushToken[hYDsk8CzmKRrwcK-yMiJ6X]', {
         mode: 'no-cors'
       }).then(() => {
       }).catch(error => {
