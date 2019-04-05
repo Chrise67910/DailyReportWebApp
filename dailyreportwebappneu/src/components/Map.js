@@ -25,7 +25,67 @@ import { forEach } from 'async';
 const client = new ApolloClient({
   uri: "https://api.graph.cool/simple/v1/cjna4ydca59580129beayc2nw"
 });
-
+const icon = require('../location.png');
+function hexToRgbA(hex){
+  var c;
+  if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+      c= hex.substring(1).split('');
+      if(c.length== 3){
+          c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+      }
+      c= '0x'+c.join('');
+      return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',1)';
+  }
+  throw new Error('Bad Hex');
+}
+const GoogleMapExample = withGoogleMap(() => //https://github.com/tomchentw/react-google-maps/issues/878
+    
+  <ApolloProvider client = {client}>
+  <div>
+  <GoogleMap
+    defaultZoom={9.8}
+    defaultCenter={{lat: 47.2634854, lng: 9.862278}}
+  >
+  <Query query={Types_QUERY}>
+        {({loading, data, error}) => {
+          console.log(data);
+                //this.setState({types: data});
+                if (loading) {
+                  return <p>Loading ...</p>;
+                }
+                if (error) { 
+                  return <p>{error.message}</p>;
+                }
+                const {allWorkers} = data;
+                //console.log("alltypes", allTypes);
+                console.log('data', data);
+                // allWorkers.forEach(element => {
+                //   console.log(element.workingOn.customer.lat, element.workingOn.customer.lng);
+                //   console.log(element.workingOn.typ.color.substring(1, 7));
+                // });
+                return (allWorkers.map(worker => (
+                <div>
+                  {worker.workingOn != null ?
+                  <Marker
+                    icon={{url: 'data:image/svg+xml;utf-8, <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <path fill="' + hexToRgbA(worker.workingOn.typ.color) + '" d="M7,0C3.13,0,0,3.13,0,7c0,5.25,7,13,7,13s7-7.75,7-13C14,3.13,10.87,0,7,0z M7,9.5C5.62,9.5,4.5,8.38,4.5,7S5.62,4.5,7,4.5 S9.5,5.62,9.5,7S8.38,9.5,7,9.5z" ></path></svg>',
+                    scaledSize: { width: 30, height: 30},
+                    anchor: { x: 15, y: 30 }
+                    }}
+                    position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
+                  >
+                  </Marker>
+                  : null}
+                </div>        
+                                     
+                )));
+          }}
+      </Query>
+  </GoogleMap> 
+  
+  </div>
+    
+  </ApolloProvider>
+)
 const Types_QUERY = gql`
     {
       allTyps {
@@ -62,67 +122,7 @@ const Types_QUERY = gql`
 
     }
   `;
-const GoogleMapExample = withGoogleMap(() => //https://github.com/tomchentw/react-google-maps/issues/878
-    
-  <ApolloProvider client = {client}>
-  <div>
-  <GoogleMap
-    defaultZoom={9.8}
-    defaultCenter={{lat: 47.2634854, lng: 9.862278}}
-  >
-  <Query query={Types_QUERY}>
-        {({loading, data, error}) => {
-          console.log(data);
-                //this.setState({types: data});
-                if (loading) {
-                  return <p>Loading ...</p>;
-                }
-                if (error) { 
-                  return <p>{error.message}</p>;
-                }
-                const {allWorkers} = data;
-                //console.log("alltypes", allTypes);
-                console.log('data', data);
-                
-                return (allWorkers.map(worker => (
-                <div>
-                  {worker.workingOn != null ?
-                  <Marker
-                    
-                    // onClick={(e) => { this.setState({ showInfoWindow: true }) }}
-                    icon={{url: 'data:image/svg+xml;utf-8, \
-                    <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> \
-                      <path fill="'+ worker.workingOn.typ.color + '" d="M7,0C3.13,0,0,3.13,0,7c0,5.25,7,13,7,13s7-7.75,7-13C14,3.13,10.87,0,7,0z M7,9.5C5.62,9.5,4.5,8.38,4.5,7S5.62,4.5,7,4.5 S9.5,5.62,9.5,7S8.38,9.5,7,9.5z" ></path> \
-                    </svg>',
-                    scaledSize: { width: 30, height: 30},
-                    anchor: { x: 15, y: 30 }
-                    }}
-                    
-                    position = {{lat: worker.workingOn.customer.lat, lng: worker.workingOn.customer.lng}}
-                  >
-                    {/* { this.state.showInfoWindow ?
-                      <InfoWindow onCloseclick={(e) => { this.setState({ showInfoWindow: false }) }}>
-                        <div>
-                          {worker.vorname + " " + worker.nachname + " befindet sich bei " + worker.workingOn.customer.name}
-                        </div>
-                      </InfoWindow>
-                      : null
-                    } */}
-                  </Marker>
-                  : null}
-                </div>        
-                                     
-                )));
-              
-          }}
-      
-      </Query>
-  </GoogleMap> 
-  
-  </div>
-    
-  </ApolloProvider>
-)
+
 class Map extends Component {
   constructor(props) {
     super(props); 
@@ -272,7 +272,8 @@ class Map extends Component {
       <div>
         <GoogleMapExample
           isMarkerShown
-          position
+          
+          
           containerElement={ <div style={{ height: 510, width: 1040, paddingRight: 63 }} /> }
           mapElement={ <div style={{ height: `100%` }} /> }
           
